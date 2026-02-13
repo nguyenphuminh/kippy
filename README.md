@@ -132,6 +132,7 @@ To be added, for now use web's built-in `Audio` class.
 
 ## Copyrights and License
 
-Copyrights © 2025 Nguyen Phu Minh.
+Copyrights © 2026 Nguyen Phu Minh.
 
 This project is licensed under the Apache 2.0 license.
+
