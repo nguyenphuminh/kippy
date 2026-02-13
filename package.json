@@ -1,0 +1,43 @@
+{
+  "name": "kippy",
+  "version": "0.1.0",
+  "description": "Kippy 2D web game engine for JS",
+  "keywords": [
+    "kippy",
+    "game-engine",
+    "game",
+    "2d",
+    "renderer",
+    "graphics",
+    "physics",
+    "library",
+    "framework",
+    "engine"
+  ],
+  "homepage": "https://github.com/nguyenphuminh/kippy#readme",
+  "bugs": {
+    "url": "https://github.com/nguyenphuminh/kippy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenphuminh/kippy.git"
+  },
+  "license": "Apache-2.0",
+  "author": "nguyenphuminh",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "files": [
+    "dist/",
+    "index.d.ts",
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ]
+}
