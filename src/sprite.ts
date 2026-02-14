@@ -13,7 +13,7 @@ export class Sprite {
     
     constructor(options: SpriteOptions) {
         this.texture = options.texture;
-        this.width = options.width || this.texture.width;
-        this.height = options.height || this.texture.height;
+        this.width = options.width ?? this.texture.width;
+        this.height = options.height ?? this.texture.height;
     }
 }

@@ -3,11 +3,13 @@ export class Entity {
     x;
     y;
     rotation;
-    constructor(options) {
+    body;
+    constructor(options = {}) {
         this.sprite = options.sprite;
-        this.x = options.x || 0;
-        this.y = options.y || 0;
-        this.rotation = options.rotation || 0;
+        this.x = options.x ?? 0;
+        this.y = options.y ?? 0;
+        this.rotation = options.rotation ?? 0;
+        this.body = options.body;
     }
     setSprite(sprite) {
         this.sprite = sprite;

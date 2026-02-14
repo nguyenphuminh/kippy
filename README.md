@@ -95,40 +95,32 @@ entity.setSprite(sprite);
 
 ### Add controls
 
-Game controls like mouse presses, key presses, and mouse cursor traking (in the game canvas, not the web window) can be done with the `Input` class:
+Game controls like mouse presses, key presses, and mouse cursor traking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
 ```js
-import { Input } from "kippy";
-
-const input = new Input({
-    canvas
-});
-
-// You can assign it into a game during initialization
-const game = new Game({
-    // other stuff
-    input
-})
-// or after
-game.setInput(input);
+const input = game.input;
 ```
 
 Then in a scene's `update` method, you can use these utilities to check for key presses:
 ```js
 // Keyboard
-input.isKeyDown(/* Character/key here */); // Key hold
-input.isKeyPressed(/* Character/key here */); // Key press
-input.isKeyReleased(/* Character/key here */); // Key released
+input.isKeyDown(/* Character/key here */); // true if key is held, false otherwise
+input.isKeyPressed(/* Character/key here */); // true if key is pressed, false otherwise
+input.isKeyReleased(/* Character/key here */); // true if key is released, false otherwise
 // Mouse
-input.isMouseDown(/* 0 for left, 1 for right */); // Mouse hold
-input.isMousePressed(/* 0 for left, 1 for right */); // Mouse press
-input.isMouseReleased(/* 0 for left, 1 for right */); // Mouse released
+input.isMouseDown(/* 0 for left, 1 for right */); // true if mouse is held, false otherwise
+input.isMousePressed(/* 0 for left, 1 for right */); // true if mouse is pressed, false otherwise
+input.isMouseReleased(/* 0 for left, 1 for right */); // true if mouse is released, false otherwise
 input.mouseX; // Current X position of mouse
 input.mouseY; // Current Y position of mouse
 ```
 
 ### Physics
 
-To be added, will have rigidBody for entities with collision and movement-related stuff.
+
+
+### Animation
+
+To be added, for now call `setSprite` to swap sprites for animations.
 
 ### Audio
 

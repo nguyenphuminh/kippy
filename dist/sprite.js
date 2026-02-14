@@ -4,7 +4,7 @@ export class Sprite {
     height;
     constructor(options) {
         this.texture = options.texture;
-        this.width = options.width || this.texture.width;
-        this.height = options.height || this.texture.height;
+        this.width = options.width ?? this.texture.width;
+        this.height = options.height ?? this.texture.height;
     }
 }

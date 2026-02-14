@@ -1,3 +1,4 @@
+import { RigidBody } from "./physics.js";
 import { Sprite } from "./sprite.js";
 
 export interface EntityOptions {
@@ -5,6 +6,7 @@ export interface EntityOptions {
     x?: number;
     y?: number;
     rotation?: number;
+    body?: RigidBody;
 }
 
 export class Entity {
@@ -12,12 +14,14 @@ export class Entity {
     public x: number;
     public y: number;
     public rotation: number;
+    public body?: RigidBody;
 
-    constructor(options: EntityOptions) {
+    constructor(options: EntityOptions = {}) {
         this.sprite = options.sprite;
-        this.x = options.x || 0;
-        this.y = options.y || 0;
-        this.rotation = options.rotation || 0;
+        this.x = options.x ?? 0;
+        this.y = options.y ?? 0;
+        this.rotation = options.rotation ?? 0;
+        this.body = options.body;
     }
 
     setSprite(sprite: Sprite) {
