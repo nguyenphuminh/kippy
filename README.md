@@ -99,7 +99,7 @@ entity.sprite = sprite;
 
 ### Add controls
 
-Game controls like mouse presses, key presses, and mouse cursor traking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
+Game controls like mouse presses, key presses, touch, and cursor traking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
 ```js
 const input = game.input;
 ```
@@ -110,12 +110,12 @@ Then in a scene's `update` method, you can use these utilities to check for key 
 input.isKeyDown(/* Character/key here */); // true if key is held, false otherwise
 input.isKeyPressed(/* Character/key here */); // true if key is pressed, false otherwise
 input.isKeyReleased(/* Character/key here */); // true if key is released, false otherwise
-// Mouse
+// Mouse/touch
 input.isPointerDown(/* 0 for left, 1 for right, 2 for touch */); // true if held, false otherwise
 input.isPointerPressed(/* 0 for left, 1 for right, 2 for touch */); // true if pressed, false otherwise
 input.isPointerReleased(/* 0 for left, 1 for right, 2 for touch */); // true if released, false otherwise
-input.mouseX; // Current X position of mouse
-input.mouseY; // Current Y position of mouse
+input.pointerX; // Current X position of mouse/touch
+input.pointerY; // Current Y position of mouse/touch
 ```
 
 ### Physics
