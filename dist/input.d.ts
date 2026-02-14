@@ -6,17 +6,17 @@ export declare class Input {
     keys: Set<string>;
     keysPressed: Set<string>;
     keysReleased: Set<string>;
-    mouseX: number;
-    mouseY: number;
-    mouseButtons: Set<number>;
-    mousePressed: Set<number>;
-    mouseReleased: Set<number>;
+    pointerX: number;
+    pointerY: number;
+    pointers: Set<number>;
+    pointersPressed: Set<number>;
+    pointersReleased: Set<number>;
     constructor(options: InputOptions);
     update(): void;
     isKeyDown(key: string): boolean;
     isKeyPressed(key: string): boolean;
     isKeyReleased(key: string): boolean;
-    isMouseDown(button?: number): boolean;
-    isMousePressed(button?: number): boolean;
-    isMouseReleased(button?: number): boolean;
+    isPointerDown(button?: number): boolean;
+    isPointerPressed(button?: number): boolean;
+    isPointerReleased(button?: number): boolean;
 }

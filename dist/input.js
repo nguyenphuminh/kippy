@@ -3,11 +3,11 @@ export class Input {
     keys = new Set(); // Key on hold
     keysPressed = new Set(); // Key pressed
     keysReleased = new Set(); // Key released
-    mouseX = 0; // Mouse coord x in canvas
-    mouseY = 0; // Mouse coord y in canvas
-    mouseButtons = new Set(); // Mouse button on hold
-    mousePressed = new Set(); // Mouse button pressed 
-    mouseReleased = new Set(); // Mouse button released
+    pointerX = 0; // Mouse/touch coord x in canvas
+    pointerY = 0; // Mouse/touch coord y in canvas
+    pointers = new Set(); // Mouse/touch on hold
+    pointersPressed = new Set(); // Mouse/touch pressed 
+    pointersReleased = new Set(); // Mouse/touch released
     constructor(options) {
         this.canvas = options.canvas;
         // Keyboard
@@ -21,21 +21,40 @@ export class Input {
             this.keys.delete(e.key);
             this.keysReleased.add(e.key);
         });
-        // Mouse
+        // Mouse and touch
         this.canvas.addEventListener("mousemove", (e) => {
             const rect = this.canvas.getBoundingClientRect();
-            this.mouseX = e.clientX - rect.left;
-            this.mouseY = e.clientY - rect.top;
+            this.pointerX = e.clientX - rect.left;
+            this.pointerY = e.clientY - rect.top;
         });
         this.canvas.addEventListener("mousedown", (e) => {
-            if (!this.mouseButtons.has(e.button)) {
-                this.mousePressed.add(e.button);
+            if (!this.pointers.has(e.button)) {
+                this.pointersPressed.add(e.button);
             }
-            this.mouseButtons.add(e.button);
+            this.pointers.add(e.button);
         });
         this.canvas.addEventListener("mouseup", (e) => {
-            this.mouseButtons.delete(e.button);
-            this.mouseReleased.add(e.button);
+            this.pointers.delete(e.button);
+            this.pointersReleased.add(e.button);
+        });
+        this.canvas.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            const rect = this.canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            this.pointerX = touch.clientX - rect.left;
+            this.pointerY = touch.clientY - rect.top;
+        });
+        this.canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            if (!this.pointers.has(2)) {
+                this.pointersPressed.add(2);
+            }
+            this.pointers.add(2);
+        });
+        this.canvas.addEventListener("touchend", (e) => {
+            e.preventDefault();
+            this.pointers.delete(2);
+            this.pointersReleased.add(2);
         });
         // Prevent right-click menu
         this.canvas.addEventListener("contextmenu", (e) => {
@@ -46,7 +65,8 @@ export class Input {
     update() {
         this.keysPressed.clear();
         this.keysReleased.clear();
-        this.mousePressed.clear();
+        this.pointersPressed.clear();
+        this.pointersReleased.clear();
     }
     // Helper methods
     isKeyDown(key) {
@@ -58,13 +78,13 @@ export class Input {
     isKeyReleased(key) {
         return this.keysReleased.has(key);
     }
-    isMouseDown(button = 0) {
-        return this.mouseButtons.has(button);
+    isPointerDown(button = 0) {
+        return this.pointers.has(button);
     }
-    isMousePressed(button = 0) {
-        return this.mousePressed.has(button);
+    isPointerPressed(button = 0) {
+        return this.pointersPressed.has(button);
     }
-    isMouseReleased(button = 0) {
-        return this.mouseReleased.has(button);
+    isPointerReleased(button = 0) {
+        return this.pointersReleased.has(button);
     }
 }

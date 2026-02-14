@@ -111,9 +111,9 @@ input.isKeyDown(/* Character/key here */); // true if key is held, false otherwi
 input.isKeyPressed(/* Character/key here */); // true if key is pressed, false otherwise
 input.isKeyReleased(/* Character/key here */); // true if key is released, false otherwise
 // Mouse
-input.isMouseDown(/* 0 for left, 1 for right */); // true if mouse is held, false otherwise
-input.isMousePressed(/* 0 for left, 1 for right */); // true if mouse is pressed, false otherwise
-input.isMouseReleased(/* 0 for left, 1 for right */); // true if mouse is released, false otherwise
+input.isPointerDown(/* 0 for left, 1 for right, 2 for touch */); // true if held, false otherwise
+input.isPointerPressed(/* 0 for left, 1 for right, 2 for touch */); // true if pressed, false otherwise
+input.isPointerReleased(/* 0 for left, 1 for right, 2 for touch */); // true if released, false otherwise
 input.mouseX; // Current X position of mouse
 input.mouseY; // Current Y position of mouse
 ```
