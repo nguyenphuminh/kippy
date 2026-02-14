@@ -20,6 +20,7 @@ export declare class RigidBody {
     torque: number;
     constructor(options?: RigidBodyOptions);
 }
+export type EntityBody = RigidBody;
 export declare class Physics {
     update(entities: Entity[]): void;
 }

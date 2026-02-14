@@ -1,4 +1,4 @@
-import { RigidBody } from "./physics.js";
+import { EntityBody } from "./physics.js";
 import { Sprite } from "./sprite.js";
 
 export interface EntityOptions {
@@ -6,7 +6,7 @@ export interface EntityOptions {
     x?: number;
     y?: number;
     rotation?: number;
-    body?: RigidBody;
+    body?: EntityBody;
 }
 
 export class Entity {
@@ -14,7 +14,7 @@ export class Entity {
     public x: number;
     public y: number;
     public rotation: number;
-    public body?: RigidBody;
+    public body?: EntityBody;
 
     constructor(options: EntityOptions = {}) {
         this.sprite = options.sprite;
@@ -22,10 +22,6 @@ export class Entity {
         this.y = options.y ?? 0;
         this.rotation = options.rotation ?? 0;
         this.body = options.body;
-    }
-
-    setSprite(sprite: Sprite) {
-        this.sprite = sprite;
     }
 
     render(ctx: CanvasRenderingContext2D) {

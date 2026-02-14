@@ -31,6 +31,9 @@ const game = new Game({
 
 // Start the game loop
 game.start();
+
+// You can also swap canvas if you want
+// game.setCanvas(someOtherCanvas);
 ```
 
 ### Create a scene
@@ -63,7 +66,8 @@ const entity = new Entity({
     sprite, // Entity's sprite to be rendered, type Sprite
     x, // Entity's x position (centered), type number
     y, // Entity's y position (centered), type number
-    rotation // Entity's rotation in radians, type number
+    rotation, // Entity's rotation in radians, type number
+    body, // Entity's physical body, type EntityBody
 });
 
 // Add it to a scene
@@ -84,13 +88,13 @@ A sprite represents what an entity looks like, the "graphics part", you can crea
 import { Sprite } from "kippy";
 
 const sprite = new Sprite({
-    texture, // Sprite's texture, can be HTMLImageElement, HTMLCanvasElement, OffscreenCanvas, ImageBitmap
+    texture, // Sprite's texture - HTMLImageElement, HTMLCanvasElement, OffscreenCanvas, ImageBitmap
     width, // Sprite's width, type number
     height // Sprite's height, type number
 });
 
 // Set sprite for an entity
-entity.setSprite(sprite);
+entity.sprite = sprite;
 ```
 
 ### Add controls
@@ -116,11 +120,39 @@ input.mouseY; // Current Y position of mouse
 
 ### Physics
 
+For movements, currently you can create a `RigidBody`:
+```js
+// Create a rigid body
+const rigidBody = new RigidBody({
+    velocityX, // X velocity, type number
+    velocityY, // Y velocity, type number
+    rotationVelocity, // Angular/rotation velocity, type number
+    mass, // Entity's mass, type number
+    inertia, // Entity's inertia, type number
+    forceX, // Entity's force on X axis, type number
+    forceY, // Entity's force on Y axis, type number
+    torque, // Entity's torque/rotational force, type number
+});
 
+// Attach body to an entity
+entity.body = rigidBody;
+
+// And you can mutate these props to update movement every frame
+entity.body.velocityX; // Set with the matching parameter above, default is 0
+entity.body.velocityY; // Set with the matching parameter above, default is 0
+entity.body.rotationVelocity; // Set with the matching parameter above, default is 0
+entity.body.mass; // Set with the matching parameter above, default is 1
+entity.body.inertia; // Set with the matching parameter above, default is 1
+entity.body.forceX; // Set with the matching parameter above, default is 0
+entity.body.forceY; // Set with the matching parameter above, default is 0
+entity.body.torque; // Set with the matching parameter above, default is 0
+```
+
+Collisions to be added.
 
 ### Animation
 
-To be added, for now call `setSprite` to swap sprites for animations.
+To be added, for now mutate `entity.sprite` to swap sprites and create animations manually.
 
 ### Audio
 

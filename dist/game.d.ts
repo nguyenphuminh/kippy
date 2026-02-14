@@ -14,8 +14,8 @@ export declare class Game {
     input: Input;
     physics: Physics;
     constructor(options: GameOptions);
+    setCanvas(canvas: HTMLCanvasElement): void;
     setScene(scene: Scene): void;
-    setInput(input: Input): void;
     start(): void;
     loop(timestamp: number): void;
 }

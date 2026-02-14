@@ -23,14 +23,15 @@ export class Game {
         this.physics = options.physics ?? new Physics();
     }
 
+    setCanvas(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    }
+
     setScene(scene: Scene) {
         this.scene?.exit();
         this.scene = scene;
         this.scene.init();
-    }
-
-    setInput(input: Input) {
-        this.input = input;
     }
 
     start() {

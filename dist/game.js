@@ -13,13 +13,14 @@ export class Game {
         this.input = options.input ?? new Input({ canvas: this.canvas });
         this.physics = options.physics ?? new Physics();
     }
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.ctx = this.canvas.getContext("2d");
+    }
     setScene(scene) {
         this.scene?.exit();
         this.scene = scene;
         this.scene.init();
-    }
-    setInput(input) {
-        this.input = input;
     }
     start() {
         requestAnimationFrame(this.loop.bind(this));

@@ -11,9 +11,6 @@ export class Entity {
         this.rotation = options.rotation ?? 0;
         this.body = options.body;
     }
-    setSprite(sprite) {
-        this.sprite = sprite;
-    }
     render(ctx) {
         if (this.sprite) {
             ctx.save();

@@ -33,6 +33,8 @@ export class RigidBody {
     }
 }
 
+export type EntityBody = RigidBody;
+
 export class Physics {
     update(entities: Entity[]) {
         for (const entity of entities) {
