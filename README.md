@@ -115,8 +115,10 @@ input.isKeyReleased(/* Character/key here */); // true if key is released, false
 input.isPointerDown(/* 0 for left, 1 for right, 2 for touch */); // true if held, false otherwise
 input.isPointerPressed(/* 0 for left, 1 for right, 2 for touch */); // true if pressed, false otherwise
 input.isPointerReleased(/* 0 for left, 1 for right, 2 for touch */); // true if released, false otherwise
-input.pointerX; // Current X position of mouse/touch
-input.pointerY; // Current Y position of mouse/touch
+// Mouse/touch position
+input.pointer; // Pointer's position vector
+input.pointer.x; // Current X position of mouse/touch
+input.pointer.y; // Current Y position of mouse/touch
 ```
 
 ### Vectors
@@ -185,6 +187,24 @@ entity.body.torque; // Set with the matching parameter above, default is 0
 ```
 
 Collisions to be added.
+
+## Camera
+
+The camera decides what part of your game world gets rendered. Note that unlike most camera implementations of which positions are centered, Kippy's camera position is at the top-left of the camera. For example, camera at (0,0) and entity at (0,0) in Godot would show the entity at the center, while the same setup in Kippy would show the entity at the top-left. This is to be more aligned with how web and canvas positioning works.
+
+The camera is available for use through every scene object:
+```js
+// Get camera
+const camera = scene.camera;
+
+// The camera has these props to manage it:
+camera.position; // The position vector of the camera, default is Vector2(0, 0)
+camera.rotation; // Rotation of the camera, default is 0
+camera.zoom // Camera zoom level, default is 1
+
+// Convert a screen-based vector (mouse position for example) to world-based vector
+camera.screenToWorld(input.pointer); // Return new vector
+```
 
 ### Animation
 

@@ -1,10 +1,10 @@
+import { Vector2 } from "./vector";
 export class Input {
     canvas;
     keys = new Set(); // Key on hold
     keysPressed = new Set(); // Key pressed
     keysReleased = new Set(); // Key released
-    pointerX = 0; // Mouse/touch coord x in canvas
-    pointerY = 0; // Mouse/touch coord y in canvas
+    pointer = new Vector2(0, 0);
     pointers = new Set(); // Mouse/touch on hold
     pointersPressed = new Set(); // Mouse/touch pressed 
     pointersReleased = new Set(); // Mouse/touch released
@@ -24,8 +24,8 @@ export class Input {
         // Mouse and touch
         this.canvas.addEventListener("mousemove", (e) => {
             const rect = this.canvas.getBoundingClientRect();
-            this.pointerX = e.clientX - rect.left;
-            this.pointerY = e.clientY - rect.top;
+            this.pointer.x = e.clientX - rect.left;
+            this.pointer.y = e.clientY - rect.top;
         });
         this.canvas.addEventListener("mousedown", (e) => {
             if (!this.pointers.has(e.button)) {
@@ -41,8 +41,8 @@ export class Input {
             e.preventDefault();
             const rect = this.canvas.getBoundingClientRect();
             const touch = e.touches[0];
-            this.pointerX = touch.clientX - rect.left;
-            this.pointerY = touch.clientY - rect.top;
+            this.pointer.x = touch.clientX - rect.left;
+            this.pointer.y = touch.clientY - rect.top;
         });
         this.canvas.addEventListener("touchstart", (e) => {
             e.preventDefault();

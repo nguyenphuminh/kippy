@@ -1,3 +1,5 @@
+import { Vector2 } from "./vector";
+
 export interface InputOptions {
     canvas: HTMLCanvasElement;
 }
@@ -9,8 +11,7 @@ export class Input {
     public keysPressed = new Set<string>(); // Key pressed
     public keysReleased = new Set<string>(); // Key released
 
-    public pointerX = 0; // Mouse/touch coord x in canvas
-    public pointerY = 0; // Mouse/touch coord y in canvas
+    public pointer = new Vector2(0, 0);
 
     public pointers = new Set<number>(); // Mouse/touch on hold
     public pointersPressed = new Set<number>(); // Mouse/touch pressed 
@@ -35,8 +36,8 @@ export class Input {
         // Mouse and touch
         this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
             const rect = this.canvas.getBoundingClientRect();
-            this.pointerX = e.clientX - rect.left;
-            this.pointerY = e.clientY - rect.top;
+            this.pointer.x = e.clientX - rect.left;
+            this.pointer.y = e.clientY - rect.top;
         });
 
         this.canvas.addEventListener("mousedown", (e: MouseEvent) => {
@@ -55,8 +56,8 @@ export class Input {
             e.preventDefault();
             const rect = this.canvas.getBoundingClientRect();
             const touch = e.touches[0];
-            this.pointerX = touch.clientX - rect.left;
-            this.pointerY = touch.clientY - rect.top;
+            this.pointer.x = touch.clientX - rect.left;
+            this.pointer.y = touch.clientY - rect.top;
         });
 
         this.canvas.addEventListener("touchstart", (e: TouchEvent) => {

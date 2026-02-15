@@ -1,3 +1,4 @@
+import { Vector2 } from "./vector";
 export interface InputOptions {
     canvas: HTMLCanvasElement;
 }
@@ -6,8 +7,7 @@ export declare class Input {
     keys: Set<string>;
     keysPressed: Set<string>;
     keysReleased: Set<string>;
-    pointerX: number;
-    pointerY: number;
+    pointer: Vector2;
     pointers: Set<number>;
     pointersPressed: Set<number>;
     pointersReleased: Set<number>;

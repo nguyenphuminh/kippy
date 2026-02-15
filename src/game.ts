@@ -30,6 +30,7 @@ export class Game {
 
     setScene(scene: Scene) {
         this.scene?.exit();
+        scene.ctx = this.ctx;
         this.scene = scene;
         this.scene.init();
     }
@@ -56,7 +57,7 @@ export class Game {
 
             // Render
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            this.scene.render(this.ctx);            
+            this.scene.render();            
         } else {
             throw new Error("Can not run game loop without a scene");
         } 
