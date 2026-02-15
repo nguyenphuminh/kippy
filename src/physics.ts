@@ -1,34 +1,29 @@
 import { Entity } from "./entity";
+import { Vector2 } from "./vector";
 
 export interface RigidBodyOptions {
-    velocityX?: number;
-    velocityY?: number;
+    velocity?: Vector2;
     rotationVelocity?: number;
     mass?: number;
     inertia?: number;
-    forceX?: number;
-    forceY?: number;
+    force?: Vector2;
     torque?: number;
 }
 
 export class RigidBody {
-    public velocityX: number;
-    public velocityY: number;
+    public velocity: Vector2;
     public rotationVelocity: number;
     public mass: number;
     public inertia: number;
-    public forceX: number;
-    public forceY: number;
+    public force: Vector2;
     public torque: number;
 
     constructor(options: RigidBodyOptions = {}) {
-        this.velocityX = options.velocityX ?? 0;
-        this.velocityY = options.velocityY ?? 0;
+        this.velocity = options.velocity ?? new Vector2(0, 0);
         this.rotationVelocity = options.rotationVelocity ?? 0;
         this.mass = options.mass ?? 1;
         this.inertia = options.inertia ?? 1;
-        this.forceX = options.forceX ?? 0;
-        this.forceY = options.forceY ?? 0;
+        this.force = options.force ?? new Vector2(0, 0);
         this.torque = options.torque ?? 0;
     }
 }
@@ -40,13 +35,17 @@ export class Physics {
         for (const entity of entities) {
             if (entity.body instanceof RigidBody) {
                 // Acceleration/apply force
-                entity.body.velocityX += entity.body.forceX / entity.body.mass;
-                entity.body.velocityY += entity.body.forceY / entity.body.mass;
+                entity.body.velocity.x += entity.body.force.x / entity.body.mass;
+                entity.body.velocity.y += entity.body.force.y / entity.body.mass;
                 entity.body.rotationVelocity += entity.body.torque / entity.body.inertia;
                 // Positional update
-                entity.x += entity.body.velocityX;
-                entity.y += entity.body.velocityY;
+                entity.position.x += entity.body.velocity.x;
+                entity.position.y += entity.body.velocity.y;
                 entity.rotation += entity.body.rotationVelocity;
+                // Clear force
+                entity.body.force.x = 0;
+                entity.body.force.y = 0;
+                entity.body.torque = 0;
             }
         }
     }

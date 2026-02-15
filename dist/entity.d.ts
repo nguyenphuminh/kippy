@@ -1,16 +1,15 @@
 import { EntityBody } from "./physics.js";
 import { Sprite } from "./sprite.js";
+import { Vector2 } from "./vector.js";
 export interface EntityOptions {
     sprite?: Sprite;
-    x?: number;
-    y?: number;
+    position?: Vector2;
     rotation?: number;
     body?: EntityBody;
 }
 export declare class Entity {
     sprite?: Sprite;
-    x: number;
-    y: number;
+    position: Vector2;
     rotation: number;
     body?: EntityBody;
     constructor(options?: EntityOptions);

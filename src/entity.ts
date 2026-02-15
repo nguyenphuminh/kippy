@@ -1,25 +1,23 @@
 import { EntityBody } from "./physics.js";
 import { Sprite } from "./sprite.js";
+import { Vector2 } from "./vector.js";
 
 export interface EntityOptions {
     sprite?: Sprite;
-    x?: number;
-    y?: number;
+    position?: Vector2;
     rotation?: number;
     body?: EntityBody;
 }
 
 export class Entity {
     public sprite?: Sprite;
-    public x: number;
-    public y: number;
+    public position: Vector2;
     public rotation: number;
     public body?: EntityBody;
 
     constructor(options: EntityOptions = {}) {
         this.sprite = options.sprite;
-        this.x = options.x ?? 0;
-        this.y = options.y ?? 0;
+        this.position = options.position ?? new Vector2(0, 0);
         this.rotation = options.rotation ?? 0;
         this.body = options.body;
     }
@@ -27,7 +25,7 @@ export class Entity {
     render(ctx: CanvasRenderingContext2D) {
         if (this.sprite) {
             ctx.save();
-            ctx.translate(this.x, this.y);
+            ctx.translate(this.position.x, this.position.y);
             ctx.rotate(this.rotation);
             ctx.drawImage(
                 this.sprite.texture,

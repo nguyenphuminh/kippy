@@ -64,8 +64,7 @@ import { Entity } from "kippy";
 
 const entity = new Entity({
     sprite, // Entity's sprite to be rendered, type Sprite
-    x, // Entity's x position (centered), type number
-    y, // Entity's y position (centered), type number
+    position, // Entity's position (centered), type Vector2
     rotation, // Entity's rotation in radians, type number
     body, // Entity's physical body, type EntityBody
 });
@@ -76,8 +75,10 @@ scene.addEntity(entity);
 scene.removeEntity(entity);
 
 // These props contain movement info and you can mutate them to edit its position
-entity.x; // Initialized from the "x" param above, 0 if not specified
-entity.y; // Initialized from the "y" param above, 0 if not specified
+entity.position; // Initialized from the "position" param above, Vector2(0, 0) if not specified
+// You can mutate these directly:
+entity.position.x;
+entity.position.y;
 entity.rotation; // Initialized from the "rotation" param above, 0 if not specified
 ```
 
@@ -118,19 +119,55 @@ input.pointerX; // Current X position of mouse/touch
 input.pointerY; // Current Y position of mouse/touch
 ```
 
+### Vectors
+
+To work with positions and movements in Kippy, it is best to know about `Vector2` first. Positions, velocities, forces, etc are all represented as vectors in Kippy. And here is how you can create a 2D vector and some vector math utilities that comes along with it:
+```js
+import { Vector2 } from "kippy";
+
+const vect = new Vector2(/* x coordinate, number */, /*y coordinate, number */);
+
+// Props
+vect.x; // X coordinate
+vect.y; // Y coordinate
+
+// Utilities
+vect.add(otherVect); // Add another vector and return the result vector
+vect.sub(otherVect); // Subtract another vector and return the result vector
+vect.scale(scale); // Multiply with scale and return the result vector
+vect.magnitude(); // Return the magnitude/length of vector
+vect.normalize(); // Return the normalized vector by magnitude
+vect.dot(otherVect); // Return dot product with another vector
+vect.distance(otherVect); // Return distance to another vector
+vect.copy(); // Return a copy (same coordinates, different reference)
+vect.lerp(otherVect, scale); // Apply linear interpolation and return
+vect.clamp(maxLength); // Clamp vector to have length below maxLength
+vect.rotate(angle); // Return rotated vector by provided angle
+vect.angle(); // Return angle of vector.
+vect.angleTo(otherVec); // Return angle between this and another vector
+vect.reflect(otherVect); // Return reflection/bounce back vector
+vect.equals(otherVect); // Check if two vectors are equal
+
+// Useful constants
+Vector2.ZERO; // Vector2(0, 0)
+Vector2.ONE; // Vector2(1, 1);
+Vector2.UP; // Vector2(0, -1);
+Vector2.DOWN; // Vector2(0, 1);
+Vector2.LEFT; // Vector2(-1, 0);
+Vector2.RIGHT; // Vector2(1, 0);
+```
+
 ### Physics
 
 For movements, currently you can create a `RigidBody`:
 ```js
 // Create a rigid body
 const rigidBody = new RigidBody({
-    velocityX, // X velocity, type number
-    velocityY, // Y velocity, type number
-    rotationVelocity, // Angular/rotation velocity, type number
+    velocity, // Entity's velocity vector, type Vector2
+    rotationVelocity, // Entity's ngular/rotation velocity, type number
     mass, // Entity's mass, type number
     inertia, // Entity's inertia, type number
-    forceX, // Entity's force on X axis, type number
-    forceY, // Entity's force on Y axis, type number
+    force, // Entity's force vector, type Vector2
     torque, // Entity's torque/rotational force, type number
 });
 
@@ -138,13 +175,12 @@ const rigidBody = new RigidBody({
 entity.body = rigidBody;
 
 // And you can mutate these props to update movement every frame
-entity.body.velocityX; // Set with the matching parameter above, default is 0
-entity.body.velocityY; // Set with the matching parameter above, default is 0
+entity.body.velocity; // Set with the matching parameter above, default is Vector2(0, 0)
 entity.body.rotationVelocity; // Set with the matching parameter above, default is 0
 entity.body.mass; // Set with the matching parameter above, default is 1
 entity.body.inertia; // Set with the matching parameter above, default is 1
-entity.body.forceX; // Set with the matching parameter above, default is 0
-entity.body.forceY; // Set with the matching parameter above, default is 0
+// Note that forces are reset after every frame
+entity.body.force; // Set with the matching parameter above, default is Vector2(0, 0)
 entity.body.torque; // Set with the matching parameter above, default is 0
 ```
 
@@ -157,6 +193,10 @@ To be added, for now mutate `entity.sprite` to swap sprites and create animation
 ### Audio
 
 To be added, for now use web's built-in `Audio` class.
+
+### Asset management
+
+To be added.
 
 ## Copyrights and License
 

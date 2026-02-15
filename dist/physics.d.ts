@@ -1,22 +1,19 @@
 import { Entity } from "./entity";
+import { Vector2 } from "./vector";
 export interface RigidBodyOptions {
-    velocityX?: number;
-    velocityY?: number;
+    velocity?: Vector2;
     rotationVelocity?: number;
     mass?: number;
     inertia?: number;
-    forceX?: number;
-    forceY?: number;
+    force?: Vector2;
     torque?: number;
 }
 export declare class RigidBody {
-    velocityX: number;
-    velocityY: number;
+    velocity: Vector2;
     rotationVelocity: number;
     mass: number;
     inertia: number;
-    forceX: number;
-    forceY: number;
+    force: Vector2;
     torque: number;
     constructor(options?: RigidBodyOptions);
 }

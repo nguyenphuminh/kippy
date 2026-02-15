@@ -1,4 +1,4 @@
-import { Game, Scene, Entity, Sprite, RigidBody } from "../index.js";
+import { Game, Scene, Entity, Sprite, RigidBody, Vector2 } from "../index.js";
 
 // Initialize canvas
 const canvas = document.querySelector("canvas");
@@ -20,21 +20,20 @@ class MainScene extends Scene {
     }
 
     update(dt) {
-        this.player.body.velocityX = 0;
-        this.player.body.velocityY = 0;
+        this.player.body.velocity = new Vector2(0, 0);
         // this.player.body.rotationVelocity = 0.01;
 
         if (input.isKeyDown("d")) {
-            this.player.body.velocityX = 1000 * dt;
+            this.player.body.velocity.x = 1000 * dt;
         } 
         if (input.isKeyDown("a")) {
-            this.player.body.velocityX = -1000 * dt;
+            this.player.body.velocity.x = -1000 * dt;
         } 
         if (input.isKeyDown("w")) {
-            this.player.body.velocityY = -1000 * dt;
+            this.player.body.velocity.y = -1000 * dt;
         }
         if (input.isKeyDown("s")) {
-            this.player.body.velocityY = 1000 * dt;
+            this.player.body.velocity.y = 1000 * dt;
         }
     }
 }
@@ -46,8 +45,7 @@ const player = new Entity({
         texture: await createImageBitmap(await (await fetch("./bird.png")).blob())
     }),
     // Initialize position for player to be in the middle of the screen
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
+    position: new Vector2(window.innerWidth / 2, window.innerHeight / 2),
     // Initialize physical body
     body: new RigidBody()
 });
