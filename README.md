@@ -274,6 +274,26 @@ To be added, for now mutate `entity.sprite` to swap sprites and create animation
 
 To be added, for now use web's built-in `Audio` class.
 
+### Sleep system
+
+When a body's velocity is too low for too long, the body will enter sleep state, which means its position will not be affected by the physics engine until a force is applied or a collision happens, this is to prevent jittering and optimize performance.
+
+You can configure it inside `RigidBody`:
+```js
+const rigidBody = new RigidBody({
+    sleepThreshold, // The low threshold velocity to enter sleep state, type number
+    sleepTimeThreshold, // The duration of sustained low velocity to enter sleep state, type number
+    isSleeping, // Flag to set sleep state, type boolean
+    sleepTimer // Current sleep timer, you probably don't need this
+});
+
+// You can mutate these to change sleep configuration:
+rigidBody.sleepThreshold; // Set with the param above, default is 0.1
+rigidBody.sleepTimeThreshold; // Set with the param above, default is 0.5
+rigidBody.isSleeping; // Set with the param above, default is false
+rigidBody.sleepTimer; // Set with the param above, default is 0
+```
+
 ## Copyrights and License
 
 Copyrights © 2026 Nguyen Phu Minh.

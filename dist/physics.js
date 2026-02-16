@@ -154,7 +154,7 @@ export class Physics {
                 entity.body.torque = 0;
             }
         }
-        // Rebuild spatial grid for collition handling
+        // Rebuild spatial grid for collision handling
         this.spatialGrid.clear();
         if (this.entityCount !== entities.length) {
             this.entityCount = entities.length;
@@ -362,7 +362,7 @@ export class Physics {
         if (velAlongNormal > 0)
             return;
         // Restitution (bounciness) with slop
-        const restitutionSlop = 0.5; // Kill bounce below 0.5 unit/sec (reduced from 1.0)
+        const restitutionSlop = 0.5; // Kill bounce below 0.5 unit/sec
         let restitution = Math.max(bodyA.restitution, bodyB.restitution);
         // No bounce for slow collisions (helps objects settle)
         if (Math.abs(velAlongNormal) < restitutionSlop) {
