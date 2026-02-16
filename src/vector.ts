@@ -8,6 +8,10 @@ export class Vector2 {
 
     constructor(public x: number, public y: number) {}
 
+    toString(): string {
+        return `Vector2(${this.x}, ${this.y})`;
+    }
+
     add(other: Vector2): Vector2 {
         return new Vector2(this.x + other.x, this.y + other.y);
     }
@@ -16,12 +20,28 @@ export class Vector2 {
         return new Vector2(this.x - other.x, this.y - other.y);
     }
 
+    mul(other: Vector2): Vector2 {
+        return new Vector2(this.x * other.x, this.y * other.y);
+    }
+
+    div(other: Vector2): Vector2 {
+        return new Vector2(this.x / other.x, this.y / other.y);
+    }
+
+    neg(): Vector2 {
+        return new Vector2(-this.x, -this.y);
+    }
+
     scale(scale: number): Vector2 {
         return new Vector2(this.x * scale, this.y * scale);
     }
 
     magnitude(): number {
         return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    magnitudeSquared(): number {
+        return this.x * this.x + this.y * this.y;
     }
 
     normalize(): Vector2 {
@@ -33,8 +53,41 @@ export class Vector2 {
         return this.x * other.x + this.y * other.y;
     }
 
+    cross(other: Vector2): number {
+        return this.x * other.y - this.y * other.x;
+    }
+
+    project(other: Vector2): Vector2 {
+        const scalar = this.dot(other) / other.magnitudeSquared();
+        return other.scale(scalar);
+    }
+
+    min(other: Vector2): Vector2 {
+        return new Vector2(Math.min(this.x, other.x), Math.min(this.y, other.y));
+    }
+
+    max(other: Vector2): Vector2 {
+        return new Vector2(Math.max(this.x, other.x), Math.max(this.y, other.y));
+    }
+
+    floor(): Vector2 {
+        return new Vector2(Math.floor(this.x), Math.floor(this.y));
+    }
+
+    ceil(): Vector2 {
+        return new Vector2(Math.ceil(this.x), Math.ceil(this.y));
+    }
+
+    round(): Vector2 {
+        return new Vector2(Math.round(this.x), Math.round(this.y));
+    }
+
     distance(other: Vector2): number {
         return Math.sqrt((this.x - other.x) ** 2 + (this.y - other.y) ** 2);
+    }
+
+    distanceSquared(other: Vector2): number {
+        return (this.x - other.x) ** 2 + (this.y - other.y) ** 2;
     }
 
     copy() {
@@ -57,6 +110,10 @@ export class Vector2 {
             this.x * cos - this.y * sin,
             this.x * sin + this.y * cos
         );
+    }
+
+    orthogonal(): Vector2 {
+        return new Vector2(-this.y, this.x)
     }
 
     angle(): number {

@@ -15,6 +15,7 @@ export class Game {
     public lastTime = 0;
     public input: Input;
     public physics: Physics;
+    public paused = false;
 
     constructor(options: GameOptions) {
         this.canvas = options.canvas;
@@ -36,15 +37,28 @@ export class Game {
     }
 
     start() {
+        window.addEventListener("blur", () => {
+            this.paused = true;
+        });
+
+        window.addEventListener("focus", () => {
+            this.paused = false;
+            this.lastTime = performance.now(); // Reset!
+        });
+
         requestAnimationFrame(this.loop.bind(this));
     }
 
     // Game loop
     loop(timestamp: number) {
+        if (this.paused) {
+            requestAnimationFrame(this.loop.bind(this));
+            return;
+        }
+
         const dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
 
-        
         if (this.scene) {
             // Update input info
             this.input.update();
@@ -53,7 +67,7 @@ export class Game {
             this.scene.update(dt);
 
             // Update physics info
-            this.physics.update(this.scene.entities);
+            this.physics.update(this.scene.entities, dt);
 
             // Render
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

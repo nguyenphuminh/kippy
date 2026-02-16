@@ -27,7 +27,7 @@ export class Camera {
         if (ctx) {
             const cx = ctx.canvas.width / 2;
             const cy = ctx.canvas.height / 2;
-            
+
             // Move to center for zoom/rotation
             ctx.translate(cx, cy);
             // Zoom and rotate around center
@@ -44,21 +44,21 @@ export class Camera {
         if (ctx) {
             const cx = ctx.canvas.width / 2;
             const cy = ctx.canvas.height / 2;
-            
+
             // Offset from center
             let x = screenPos.x - cx;
             let y = screenPos.y - cy;
-            
+
             // Undo rotation
             const cos = Math.cos(-this.rotation);
             const sin = Math.sin(-this.rotation);
             const rotatedX = x * cos - y * sin;
             const rotatedY = x * sin + y * cos;
-            
+
             // Undo zoom
             const worldX = rotatedX / this.zoom;
             const worldY = rotatedY / this.zoom;
-            
+
             // Add camera offset
             return new Vector2(
                 worldX + this.position.x + cx / this.zoom,
