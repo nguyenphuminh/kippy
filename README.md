@@ -84,7 +84,7 @@ entity.rotation; // Initialized from the "rotation" param above, 0 if not specif
 
 ### Create a sprite
 
-A sprite represents what an entity looks like, the "graphics part", you can create a sprite like this:
+A sprite represents what an entity looks like (the "graphics part"), and you can create a sprite like this:
 ```js
 import { Sprite } from "kippy";
 
@@ -100,7 +100,7 @@ entity.sprite = sprite;
 
 ### Add controls
 
-Game controls like mouse presses, key presses, touch, and cursor traking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
+Game controls like mouse presses, key presses, touch, and cursor tracking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
 ```js
 const input = game.input;
 ```
@@ -123,7 +123,7 @@ input.pointer.y; // Current Y position of mouse/touch
 
 ### Vectors
 
-To work with positions and movements in Kippy, it is best to know about `Vector2` first. Positions, velocities, forces, etc are all represented as vectors in Kippy. And here is how you can create a 2D vector and some vector math utilities that comes along with it:
+To work with positions and movements in Kippy, it is best to know about `Vector2` first. Positions, velocities, forces, etc are all represented as vectors in Kippy. And here are how you can create a 2D vector and some vector math utilities that come along with it:
 ```js
 import { Vector2 } from "kippy";
 
@@ -166,7 +166,7 @@ For movements, currently you can create a `RigidBody`:
 // Create a rigid body
 const rigidBody = new RigidBody({
     velocity, // Entity's velocity vector, type Vector2
-    rotationVelocity, // Entity's ngular/rotation velocity, type number
+    rotationVelocity, // Entity's angular/rotation velocity, type number
     mass, // Entity's mass, type number
     inertia, // Entity's inertia, type number
     force, // Entity's force vector, type Vector2
