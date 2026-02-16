@@ -1,4 +1,4 @@
-import { Game, Scene, Entity, Sprite, RigidBody, Vector2 } from "../index.js";
+import { Game, Scene, Entity, Sprite, RigidBody, Vector2, CircleCollider } from "../index.js";
 
 // Initialize canvas
 const canvas = document.querySelector("canvas");
@@ -15,44 +15,48 @@ const input = game.input;
 // Structure scene
 class MainScene extends Scene {
     constructor(player) {
-        super(player);
+        super();
         this.player = player;
     }
 
     update(dt) {
-        this.player.body.velocity = new Vector2(0, 0);
-        // this.player.body.rotationVelocity = 0.01;
+        this.player.body.force.y += 980;
 
-        if (input.isKeyDown("d")) {
-            this.player.body.velocity.x = 1000 * dt;
-        } 
-        if (input.isKeyDown("a")) {
-            this.player.body.velocity.x = -1000 * dt;
-        } 
-        if (input.isKeyDown("w")) {
-            this.player.body.velocity.y = -1000 * dt;
-        }
-        if (input.isKeyDown("s")) {
-            this.player.body.velocity.y = 1000 * dt;
-        }
+        console.log(this.player.body.velocity);
     }
 }
 
 // Initialize player
-const player = new Entity({
-    // Initialize sprite for player
+const ball = new Entity({
     sprite: new Sprite({
+        width: 40,
+        height: 40,
         texture: await createImageBitmap(await (await fetch("./bird.png")).blob())
     }),
-    // Initialize position for player to be in the middle of the screen
-    position: new Vector2(window.innerWidth / 2, window.innerHeight / 2),
-    // Initialize physical body
-    body: new RigidBody()
+    position: new Vector2(300, 100),
+    body: new RigidBody({
+        velocity: new Vector2(0, 0),
+        restitution: 0.8
+    }),
+    collider: new CircleCollider({ radius: 20 })
+});
+
+// Floor - infinite mass
+const floor = new Entity({
+    sprite: new Sprite({
+        width: 600,
+        height: 600,
+        texture: await createImageBitmap(await (await fetch("./bird.png")).blob())
+    }),
+    position: new Vector2(300, 550),
+    body: new RigidBody({ mass: Infinity }),
+    collider: new CircleCollider({ radius: 300 })
 });
 
 // Create scene and add player
-const scene = new MainScene(player);
-scene.addEntity(player);
+const scene = new MainScene(ball, floor);
+scene.addEntity(ball);
+scene.addEntity(floor);
 
 // Set scene and start game loop
 game.setScene(scene);

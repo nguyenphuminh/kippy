@@ -13,6 +13,7 @@ export declare class Game {
     lastTime: number;
     input: Input;
     physics: Physics;
+    paused: boolean;
     constructor(options: GameOptions);
     setCanvas(canvas: HTMLCanvasElement): void;
     setScene(scene: Scene): void;

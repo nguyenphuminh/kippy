@@ -67,6 +67,7 @@ const entity = new Entity({
     position, // Entity's position (centered), type Vector2
     rotation, // Entity's rotation in radians, type number
     body, // Entity's physical body, type EntityBody
+    collider, // Entity's collider, type Collider
 });
 
 // Add it to a scene
@@ -134,17 +135,31 @@ vect.x; // X coordinate
 vect.y; // Y coordinate
 
 // Utilities
+vect.toString(); // Returns "Vector2(x, y)"
 vect.add(otherVect); // Add another vector and return the result vector
 vect.sub(otherVect); // Subtract another vector and return the result vector
+vect.mul(otherVect); // Multiply with another vector and return the result vector
+vect.div(otherVect); // Divide by another vector and return the result vector
+vect.neg(); // Negate and return the result vector
 vect.scale(scale); // Multiply with scale and return the result vector
 vect.magnitude(); // Return the magnitude/length of vector
+vect.magnitudeSquared(); // Return the squared magnitude/length of vector
 vect.normalize(); // Return the normalized vector by magnitude
 vect.dot(otherVect); // Return dot product with another vector
+vect.cross(otherVect); // Return cross product with another vector
+vect.project(otherVect); // Return projection on another vector
+vect.min(otherVect); // Return a new vector with min coordinates
+vect.max(otherVect); // Return a new vector with max coordinates
+vect.floor(); // Floor rounding
+vect.ceil(); // Ceil rounding
+vect.round(); // Normal rounding
 vect.distance(otherVect); // Return distance to another vector
+vect.distanceSquared(otherVect); // Return squared distance to another vector
 vect.copy(); // Return a copy (same coordinates, different reference)
 vect.lerp(otherVect, scale); // Apply linear interpolation and return
 vect.clamp(maxLength); // Clamp vector to have length below maxLength
 vect.rotate(angle); // Return rotated vector by provided angle
+vect.orthogonal(); // Return orthogonal vector of this vector
 vect.angle(); // Return angle of vector.
 vect.angleTo(otherVec); // Return angle between this and another vector
 vect.reflect(otherVect); // Return reflection/bounce back vector
@@ -163,6 +178,8 @@ Vector2.RIGHT; // Vector2(1, 0);
 
 For movements, currently you can create a `RigidBody`:
 ```js
+import { RigidBody } from "kippy";
+
 // Create a rigid body
 const rigidBody = new RigidBody({
     velocity, // Entity's velocity vector, type Vector2
@@ -171,6 +188,7 @@ const rigidBody = new RigidBody({
     inertia, // Entity's inertia, type number
     force, // Entity's force vector, type Vector2
     torque, // Entity's torque/rotational force, type number
+    restitution // Entity's restitution for collision bounce back, type number
 });
 
 // Attach body to an entity
@@ -184,9 +202,51 @@ entity.body.inertia; // Set with the matching parameter above, default is 1
 // Note that forces are reset after every frame
 entity.body.force; // Set with the matching parameter above, default is Vector2(0, 0)
 entity.body.torque; // Set with the matching parameter above, default is 0
+entity.body.restitution; // Set with the matching parameter above, default is 0
 ```
 
-Collisions to be added.
+For collisions, you can create a `CircleCollider` for now:
+```js
+import { CircleCollider } from "kippy";
+
+const collider = new CircleCollider({
+    radius, // Circle collider's radius, type number
+    offset, // Offset from entity's position, type Vector2
+    isTrigger, // If true, trigger callbacks are called and collision physics like bouncing 
+               // will not apply. Otherwise, collision callbacks are called and physics apply
+    layer, // A bit mask to determine what collision layer this collider is at
+    mask, // A bit mask to check what colliders to collide
+});
+
+// Attach collider to an entity
+entity.collider = collider;
+
+// You can mutate these props to configure the collider
+collider.radius; // Set with the matching parameter above, required
+collider.offset; // Set with the matching parameter above, default is Vector2(0, 0)
+collider.isTrigger; // Set with the matching parameter above, default is false
+collider.layer; // Set with the matching parameter above, default is (1 << 0)
+collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
+```
+
+And you can handle when two objects collide:
+```js
+collider.onCollisionEnter = (other, info) => {};
+collider.onCollisionStay = (other, info) => {};
+collider.onCollisionExit = (other, info) => {};
+collider.onTriggerEnter = (other) => {};
+collider.onTriggerStay = (other) => {};
+collider.onTriggerExit = (other) => {};
+```
+
+`info` has the structure of:
+```js
+{
+    normal, // Vector2
+    penetration, // number
+    contact, // Vector2
+}
+```
 
 ### Camera
 
@@ -214,9 +274,25 @@ To be added, for now mutate `entity.sprite` to swap sprites and create animation
 
 To be added, for now use web's built-in `Audio` class.
 
-### Asset management
+### Sleep system
 
-To be added.
+When a body's velocity is too low for too long, the body will enter sleep state, which means its position will not be affected by the physics engine until a force is applied or a collision happens, this is to prevent jittering and optimize performance.
+
+You can configure it inside `RigidBody`:
+```js
+const rigidBody = new RigidBody({
+    sleepThreshold, // The low threshold velocity to enter sleep state, type number
+    sleepTimeThreshold, // The duration of sustained low velocity to enter sleep state, type number
+    isSleeping, // Flag to set sleep state, type boolean
+    sleepTimer // Current sleep timer, you probably don't need this
+});
+
+// You can mutate these to change sleep configuration:
+rigidBody.sleepThreshold; // Set with the param above, default is 0.1
+rigidBody.sleepTimeThreshold; // Set with the param above, default is 0.5
+rigidBody.isSleeping; // Set with the param above, default is false
+rigidBody.sleepTimer; // Set with the param above, default is 0
+```
 
 ## Copyrights and License
 
