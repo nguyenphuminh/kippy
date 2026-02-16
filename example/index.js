@@ -22,7 +22,7 @@ class MainScene extends Scene {
     update(dt) {
         this.player.body.force.y += 980;
 
-        console.log(this.player.body.velocity);
+        // console.log(this.player.body.velocity);
     }
 }
 

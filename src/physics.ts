@@ -263,6 +263,12 @@ export class Physics {
                         const collisionResult = this.checkCollision(entity, other);
 
                         if (collisionResult.info) {
+                            // Wake if contacting an awake body
+                            if (!entity.body?.isSleeping || !other.body?.isSleeping) {
+                                entity.body?.wake();
+                                other.body?.wake();
+                            }
+
                             // Track collision
                             if (!currentCollisions.has(entity)) {
                                 currentCollisions.set(entity, new Map());
@@ -277,9 +283,6 @@ export class Physics {
 
                             if (!wasColliding) {
                                 // ENTER
-                                entity.body?.wake();
-                                other.body?.wake();
-
                                 if (collisionResult.isTrigger) {
                                     entity.onTriggerEnter?.(other);
                                     other.onTriggerEnter?.(entity);
