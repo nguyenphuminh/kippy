@@ -44,7 +44,24 @@ export declare class CircleCollider {
     mask: number;
     constructor(options: CircleColliderOptions);
 }
-export type Collider = CircleCollider;
+export interface BoxColliderOptions {
+    width: number;
+    height: number;
+    offset?: Vector2;
+    isTrigger?: boolean;
+    layer?: number;
+    mask?: number;
+}
+export declare class BoxCollider {
+    width: number;
+    height: number;
+    offset: Vector2;
+    isTrigger: boolean;
+    layer: number;
+    mask: number;
+    constructor(options: BoxColliderOptions);
+}
+export type Collider = CircleCollider | BoxCollider;
 export interface SpatialGridOptions {
     cellSize?: number;
     grid?: Map<string, Set<Entity>>;

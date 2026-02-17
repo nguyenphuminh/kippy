@@ -1,4 +1,4 @@
-import { Game, Scene, Entity, Sprite, RigidBody, Vector2, CircleCollider } from "../index.js";
+import { Game, Scene, Entity, Sprite, RigidBody, Vector2, CircleCollider, BoxCollider } from "../index.js";
 
 // Initialize canvas
 const canvas = document.querySelector("canvas");
@@ -22,7 +22,13 @@ class MainScene extends Scene {
     update(dt) {
         this.player.body.force.y += 980;
 
-        // console.log(this.player.body.velocity);
+        if (input.isKeyDown("d")) {
+            console.log(this.player.body.velocity);
+            this.player.body.velocity.x = 200;
+        } 
+        if (input.isKeyDown("a")) {
+            this.player.body.velocity.x = -200;
+        }
     }
 }
 
@@ -50,7 +56,7 @@ const floor = new Entity({
     }),
     position: new Vector2(300, 550),
     body: new RigidBody({ mass: Infinity }),
-    collider: new CircleCollider({ radius: 300 })
+    collider: new BoxCollider({ width: 600, height: 600 })
 });
 
 // Create scene and add player

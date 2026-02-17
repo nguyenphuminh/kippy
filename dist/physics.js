@@ -43,6 +43,22 @@ export class CircleCollider {
         this.mask = options.mask ?? 0xFFFFFFFF;
     }
 }
+export class BoxCollider {
+    width;
+    height;
+    offset;
+    isTrigger;
+    layer;
+    mask;
+    constructor(options) {
+        this.width = options.width;
+        this.height = options.height;
+        this.offset = options.offset ?? new Vector2(0, 0);
+        this.isTrigger = options.isTrigger ?? false;
+        this.layer = options.layer ?? (1 << 0);
+        this.mask = options.mask ?? 0xFFFFFFFF;
+    }
+}
 export class SpatialGrid {
     cellSize;
     grid;
@@ -121,6 +137,16 @@ export class SpatialGrid {
                 maxX: entity.position.x + radius,
                 minY: entity.position.y - radius,
                 maxY: entity.position.y + radius
+            };
+        }
+        else if (entity.collider instanceof BoxCollider) {
+            const halfWidth = entity.collider.width;
+            const halfHeight = entity.collider.height;
+            return {
+                minX: entity.position.x - halfWidth,
+                maxX: entity.position.x + halfWidth,
+                minY: entity.position.y - halfHeight,
+                maxY: entity.position.y + halfHeight
             };
         }
         else {
@@ -308,7 +334,7 @@ export class Physics {
             // Check collision
             const posA = entityA.position.add(entityA.collider.offset);
             const posB = entityB.position.add(entityB.collider.offset);
-            // Check different types of colliders, only circle collider for now
+            // Check different types of colliders
             if (entityA.collider instanceof CircleCollider && entityB.collider instanceof CircleCollider) {
                 const distance = posA.distance(posB);
                 const radiusSum = entityA.collider.radius + entityB.collider.radius;
@@ -333,6 +359,110 @@ export class Physics {
                         normal,
                         penetration,
                         contact: posA.add(normal.scale(entityA.collider.radius)),
+                        accumulatedNormalImpulse: accumulatedImpulse
+                    }
+                };
+            }
+            else if (entityA.collider instanceof BoxCollider && entityB.collider instanceof BoxCollider) {
+                const halfAx = entityA.collider.width / 2;
+                const halfAy = entityA.collider.height / 2;
+                const halfBx = entityB.collider.width / 2;
+                const halfBy = entityB.collider.height / 2;
+                const delta = posB.sub(posA);
+                const overlapX = halfAx + halfBx - Math.abs(delta.x);
+                const overlapY = halfAy + halfBy - Math.abs(delta.y);
+                if (overlapX <= 0 || overlapY <= 0) {
+                    return { isTrigger: false };
+                }
+                let normal;
+                let penetration;
+                if (overlapX < overlapY) {
+                    penetration = overlapX;
+                    normal = new Vector2(delta.x < 0 ? -1 : 1, 0);
+                }
+                else {
+                    penetration = overlapY;
+                    normal = new Vector2(0, delta.y < 0 ? -1 : 1);
+                }
+                // Contact point: center of overlapping region
+                const contactX = posA.x + Math.sign(delta.x) * (halfAx - overlapX / 2);
+                const contactY = posA.y + Math.sign(delta.y) * (halfAy - overlapY / 2);
+                let accumulatedImpulse = 0;
+                const lastContactInfo = this.collisionPairs.get(entityA)?.get(entityB) ||
+                    this.collisionPairs.get(entityB)?.get(entityA);
+                if (lastContactInfo) {
+                    accumulatedImpulse = lastContactInfo.accumulatedNormalImpulse;
+                }
+                return {
+                    isTrigger,
+                    info: {
+                        normal,
+                        penetration,
+                        contact: new Vector2(contactX, contactY),
+                        accumulatedNormalImpulse: accumulatedImpulse
+                    }
+                };
+            }
+            else if ((entityA.collider instanceof CircleCollider && entityB.collider instanceof BoxCollider) ||
+                (entityA.collider instanceof BoxCollider && entityB.collider instanceof CircleCollider)) {
+                const isCircleA = entityA.collider instanceof CircleCollider;
+                const circlePos = isCircleA ? posA : posB;
+                const boxPos = isCircleA ? posB : posA;
+                const circle = (isCircleA ? entityA : entityB).collider;
+                const box = (isCircleA ? entityB : entityA).collider;
+                const halfW = box.width / 2;
+                const halfH = box.height / 2;
+                // Box center -> circle center
+                const delta = circlePos.sub(boxPos);
+                const inside = Math.abs(delta.x) < halfW && Math.abs(delta.y) < halfH;
+                let normal;
+                let penetration;
+                let contact;
+                if (inside) {
+                    const overlapX = halfW - Math.abs(delta.x);
+                    const overlapY = halfH - Math.abs(delta.y);
+                    if (overlapX < overlapY) {
+                        const sign = delta.x < 0 ? -1 : 1;
+                        const boxToCircle = new Vector2(sign, 0);
+                        normal = isCircleA ? boxToCircle.neg() : boxToCircle; // A→B
+                        penetration = circle.radius + overlapX;
+                        contact = new Vector2(boxPos.x + sign * halfW, circlePos.y);
+                    }
+                    else {
+                        const sign = delta.y < 0 ? -1 : 1;
+                        const boxToCircle = new Vector2(0, sign);
+                        normal = isCircleA ? boxToCircle.neg() : boxToCircle;
+                        penetration = circle.radius + overlapY;
+                        contact = new Vector2(circlePos.x, boxPos.y + sign * halfH);
+                    }
+                }
+                else {
+                    const clampedX = Math.max(-halfW, Math.min(halfW, delta.x));
+                    const clampedY = Math.max(-halfH, Math.min(halfH, delta.y));
+                    const closest = boxPos.add(new Vector2(clampedX, clampedY));
+                    const diff = circlePos.sub(closest);
+                    const distSq = diff.magnitudeSquared();
+                    if (distSq >= circle.radius * circle.radius) {
+                        return { isTrigger: false };
+                    }
+                    const dist = Math.sqrt(distSq);
+                    const boxToCircle = dist > 0 ? diff.scale(1 / dist) : new Vector2(1, 0);
+                    normal = isCircleA ? boxToCircle.neg() : boxToCircle;
+                    penetration = circle.radius - dist;
+                    contact = closest;
+                }
+                let accumulatedImpulse = 0;
+                const lastContactInfo = this.collisionPairs.get(entityA)?.get(entityB) ||
+                    this.collisionPairs.get(entityB)?.get(entityA);
+                if (lastContactInfo) {
+                    accumulatedImpulse = lastContactInfo.accumulatedNormalImpulse;
+                }
+                return {
+                    isTrigger,
+                    info: {
+                        normal,
+                        penetration,
+                        contact,
                         accumulatedNormalImpulse: accumulatedImpulse
                     }
                 };
@@ -387,11 +517,14 @@ export class Physics {
         bodyA.velocity = bodyA.velocity.sub(info.normal.scale(actualImpulse * invMassA));
         bodyB.velocity = bodyB.velocity.add(info.normal.scale(actualImpulse * invMassB));
         // Apply angular impulse (torque from contact point)
-        const rA = info.contact.sub(entityA.position);
+        // Disabled for now because colliders must rotate too and there isn't polygon collider solver for now
+        /*const rA = info.contact.sub(entityA.position);
         const rB = info.contact.sub(entityB.position);
+        
         const angularImpulseA = rA.cross(info.normal.scale(-actualImpulse));
         const angularImpulseB = rB.cross(info.normal.scale(actualImpulse));
+        
         bodyA.rotationVelocity += angularImpulseA * (isFinite(bodyA.inertia) ? 1 / bodyA.inertia : 0);
-        bodyB.rotationVelocity += angularImpulseB * (isFinite(bodyB.inertia) ? 1 / bodyB.inertia : 0);
+        bodyB.rotationVelocity += angularImpulseB * (isFinite(bodyB.inertia) ? 1 / bodyB.inertia : 0);*/
     }
 }

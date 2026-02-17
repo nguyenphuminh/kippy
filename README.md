@@ -229,6 +229,27 @@ collider.layer; // Set with the matching parameter above, default is (1 << 0)
 collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
 ```
 
+or a `BoxCollider`:
+```js
+const collider = new BoxCollider({
+    width, // Circle collider's width, type number
+    height, // Circle collider's height, type number
+    offset, // Offset from entity's position, type Vector2
+    isTrigger, // If true, trigger callbacks are called and collision physics like bouncing 
+               // will not apply. Otherwise, collision callbacks are called and physics apply
+    layer, // A bit mask to determine what collision layer this collider is at
+    mask, // A bit mask to check what colliders to collide
+});
+
+// You can mutate these props to configure the box collider
+collider.width; // Set with the matching parameter above, required
+collider.height; // Set with the matching parameter above, required
+collider.offset; // Set with the matching parameter above, default is Vector2(0, 0)
+collider.isTrigger; // Set with the matching parameter above, default is false
+collider.layer; // Set with the matching parameter above, default is (1 << 0)
+collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
+```
+
 And you can handle when two objects collide:
 ```js
 collider.onCollisionEnter = (other, info) => {};
