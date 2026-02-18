@@ -9,6 +9,10 @@ Install through npm:
 npm install kippy
 ```
 
+## Example
+
+There is a Flappy Bird game in `./example` for now. You can run it with 
+
 ## Tutorial
 
 Here is a vaguely-written tutorial for now:

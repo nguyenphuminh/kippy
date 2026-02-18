@@ -1,4 +1,4 @@
-import { Game, Scene, Entity, RigidBody, CircleCollider, BoxCollider, Sprite, Vector2 } from "../index";
+import { Game, Scene, Entity, RigidBody, CircleCollider, BoxCollider, Sprite, Vector2 } from "../dist/bundle.min.js";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const GRAVITY        = 1800;
