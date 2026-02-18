@@ -1,6 +1,6 @@
 {
   "name": "kippy",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Kippy 2D web game engine for JS",
   "keywords": [
     "kippy",
@@ -43,5 +43,6 @@
     "index.js",
     "LICENSE",
     "README.md"
-  ]
+  ],
+  "types": "dist/types/index.d.ts"
 }
