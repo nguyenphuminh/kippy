@@ -2,11 +2,38 @@
 
 Kippy is a 2D JS game engine written purely for fun and simplicity. It currently utilizes the Canvas 2D context for rendering and aims to have a small set of APIs viable for game dev, but do expect a lot of components to change in the future.
 
-## Setup
+## Usage
 
 Install through npm:
-```
+```sh
 npm install kippy
+```
+
+then import, for example:
+```js
+import { Game, Scene, Entity } from "kippy";
+```
+
+or if you are on raw HTML5, you can pull from a cdn:
+```js
+import { Game, Scene, Entity } from "https://unpkg.com/kippy";
+```
+
+## Example
+
+There is a Flappy Bird game in `./example` for now. You can run it by cloning this repo, then install deps:
+```sh
+npm install
+```
+
+and build:
+```sh
+npm run build
+```
+
+and start Vite:
+```sh
+npx vite
 ```
 
 ## Tutorial

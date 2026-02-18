@@ -1,6 +1,6 @@
 {
   "name": "kippy",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Kippy 2D web game engine for JS",
   "keywords": [
     "kippy",
@@ -25,11 +25,15 @@
   "license": "Apache-2.0",
   "author": "nguyenphuminh",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/bundle.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx rollup -c"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "rollup": "^4.57.1",
+    "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },
