@@ -1,18 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Example game</title>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flappy Bird</title>
     <style>
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #ui {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            font-family: 'Press Start 2P', monospace;
+            color: white;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+        }
+
+        #score {
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(24px, 5vw, 48px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #score.visible {
+            opacity: 1;
+        }
+
+        #overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            background: rgba(0, 0, 0, 0.4);
+            transition: opacity 0.3s;
+        }
+
+        #overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #overlay-title {
+            font-size: clamp(20px, 5vw, 42px);
+            color: #FFD700;
+            text-shadow: 4px 4px 0 #8B6914, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            letter-spacing: 2px;
+        }
+
+        #overlay-subtitle {
+            font-size: clamp(10px, 2vw, 16px);
+            opacity: 0.9;
+            animation: blink 1.2s step-end infinite;
+        }
+
+        #best-score {
+            font-size: clamp(9px, 1.8vw, 14px);
+            color: #aaa;
+        }
+
+        #final-score {
+            font-size: clamp(12px, 2.5vw, 20px);
+            color: #FFD700;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <canvas></canvas>
-    <script src="./index.js" type="module"></script>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div id="score">0</div>
+        <div id="overlay">
+            <div id="overlay-title">FLAPPY BIRD</div>
+            <div id="final-score" style="display:none"></div>
+            <div id="best-score" style="display:none"></div>
+            <div id="overlay-subtitle">PRESS SPACE OR TAP</div>
+        </div>
+    </div>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>

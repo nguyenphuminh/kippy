@@ -43,8 +43,6 @@ export class Game {
         const dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
         if (this.scene) {
-            // Update input info
-            this.input.update();
             // Update game logic
             this.scene.update(dt);
             // Update physics info
@@ -52,6 +50,8 @@ export class Game {
             // Render
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             this.scene.render();
+            // Update input info
+            this.input.update();
         }
         else {
             throw new Error("Can not run game loop without a scene");

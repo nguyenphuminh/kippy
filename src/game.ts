@@ -60,9 +60,6 @@ export class Game {
         this.lastTime = timestamp;
 
         if (this.scene) {
-            // Update input info
-            this.input.update();
-
             // Update game logic
             this.scene.update(dt);
 
@@ -71,7 +68,10 @@ export class Game {
 
             // Render
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            this.scene.render();            
+            this.scene.render();
+
+            // Update input info
+            this.input.update();
         } else {
             throw new Error("Can not run game loop without a scene");
         } 

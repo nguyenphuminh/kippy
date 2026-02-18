@@ -297,7 +297,7 @@ To be added, for now use web's built-in `Audio` class.
 
 ### Sleep system
 
-When a body's velocity is too low for too long, the body will enter sleep state, which means its position will not be affected by the physics engine until a force is applied or a collision happens, this is to prevent jittering and optimize performance.
+When a body's velocity is too low for too long, the body will enter sleep state, which means its position will not be affected by the physics engine until a force is applied, a collision happens, or the velocity is above threshold again, this is to prevent jittering and optimize performance.
 
 You can configure it inside `RigidBody`:
 ```js

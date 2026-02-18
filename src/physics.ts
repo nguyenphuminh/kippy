@@ -247,8 +247,13 @@ export class Physics {
         // Update velocity/apply force
         for (const entity of entities) {
             if (entity.body instanceof RigidBody) {
-                // Wake if force applied
-                if (entity.body.force.magnitudeSquared() > 0 || entity.body.torque !== 0) {
+                // Wake if force applied or velocity above threshold
+                if (
+                    entity.body.force.magnitudeSquared() > 0 ||
+                    entity.body.torque !== 0 ||
+                    entity.body.velocity.magnitudeSquared() > entity.body.sleepThreshold ** 2 ||
+                    Math.abs(entity.body.rotationVelocity) > entity.body.sleepThreshold
+                ) {
                     entity.body.wake();
                 }
 
