@@ -9,9 +9,14 @@ Install through npm:
 npm install kippy
 ```
 
+then import, for example:
+```js
+import { Game, Scene, Entity } from "kippy";
+```
+
 or if you are on raw HTML5, you can pull from a cdn:
-```html
-<script type="module" src="https://unpkg.com/kippy"></script>
+```js
+import { Game, Scene, Entity } from "https://unpkg.com/kippy";
 ```
 
 ## Example
