@@ -6,3 +6,4 @@ export * from "./input.js";
 export * from "./physics.js";
 export * from "./vector.js";
 export * from "./camera.js";
+export * from "./animation.js";

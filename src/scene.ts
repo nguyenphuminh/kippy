@@ -20,6 +20,12 @@ export abstract class Scene {
         this.entities = this.entities.filter(childEntities => childEntities !== entity);
     }
 
+    animationUpdate(deltaTime: number) {
+        for (const entity of this.entities) {
+            entity.animator?.update(deltaTime);
+        }
+    }
+
     render() {
         const ctx = this.ctx;
 

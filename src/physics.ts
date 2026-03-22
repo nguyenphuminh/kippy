@@ -271,15 +271,18 @@ export class Physics {
             }
         }
 
+        // Get collidable entities
+        const collidableEntities = entities.filter(entity => entity.collider);
+
         // Rebuild spatial grid for collision handling
         this.spatialGrid.clear();
 
-        if (this.entityCount !== entities.length) {
-            this.entityCount = entities.length;
-            this.spatialGrid.adaptCellSize(entities);
+        if (this.entityCount !== collidableEntities.length) {
+            this.entityCount = collidableEntities.length;
+            this.spatialGrid.adaptCellSize(collidableEntities);
         }
 
-        for (const entity of entities) {
+        for (const entity of collidableEntities) {
             this.spatialGrid.insert(entity);
         }
 
@@ -287,76 +290,74 @@ export class Physics {
         const currentCollisions = new Map<Entity, Map<Entity, CollisionInfo>>(); // To update this.collisionPairs and check duplicates
         const contacts: Array<{ entityA: Entity, entityB: Entity, info: CollisionInfo }> = [];
 
-        for (const entity of entities) {
-            if (entity.collider) {
-                const nearby = this.spatialGrid.getNearby(entity);
+        for (const entity of collidableEntities) {
+            const nearby = this.spatialGrid.getNearby(entity);
 
-                for (const other of nearby) {
-                    if (other.collider) {
-                        // Check duplicate
-                        if (
-                            (currentCollisions.has(entity) && currentCollisions.get(entity)?.has(other)) ||
-                            (currentCollisions.has(other) && currentCollisions.get(other)?.has(entity))
-                        ) {
-                            continue;
+            for (const other of nearby) {
+                if (other.collider) {
+                    // Check duplicate
+                    if (
+                        (currentCollisions.has(entity) && currentCollisions.get(entity)?.has(other)) ||
+                        (currentCollisions.has(other) && currentCollisions.get(other)?.has(entity))
+                    ) {
+                        continue;
+                    }
+
+                    // Check collision
+                    const collisionResult = this.checkCollision(entity, other);
+
+                    if (collisionResult.info) {
+                        // Wake if contacting an awake body
+                        if (!entity.body?.isSleeping || !other.body?.isSleeping) {
+                            entity.body?.wake();
+                            other.body?.wake();
                         }
 
-                        // Check collision
-                        const collisionResult = this.checkCollision(entity, other);
+                        // Track collision
+                        if (!currentCollisions.has(entity)) {
+                            currentCollisions.set(entity, new Map());
+                        }
+                        currentCollisions.get(entity)?.set(other, collisionResult.info);
 
-                        if (collisionResult.info) {
-                            // Wake if contacting an awake body
-                            if (!entity.body?.isSleeping || !other.body?.isSleeping) {
-                                entity.body?.wake();
-                                other.body?.wake();
-                            }
+                        // Check if this is a new collision
+                        const wasColliding = (
+                            this.collisionPairs.get(entity)?.has(other) ||
+                            this.collisionPairs.get(other)?.has(entity)
+                        );
 
-                            // Track collision
-                            if (!currentCollisions.has(entity)) {
-                                currentCollisions.set(entity, new Map());
-                            }
-                            currentCollisions.get(entity)?.set(other, collisionResult.info);
-
-                            // Check if this is a new collision
-                            const wasColliding = (
-                                this.collisionPairs.get(entity)?.has(other) ||
-                                this.collisionPairs.get(other)?.has(entity)
-                            );
-
-                            if (!wasColliding) {
-                                // ENTER
-                                if (collisionResult.isTrigger) {
-                                    entity.onTriggerEnter?.(other);
-                                    other.onTriggerEnter?.(entity);
-                                } else {
-                                    entity.onCollisionEnter?.(other, collisionResult.info);
-                                    other.onCollisionEnter?.(entity, {
-                                        ...collisionResult.info,
-                                        normal: new Vector2(-collisionResult.info.normal.x, -collisionResult.info.normal.y)
-                                    });
-                                }
+                        if (!wasColliding) {
+                            // ENTER
+                            if (collisionResult.isTrigger) {
+                                entity.onTriggerEnter?.(other);
+                                other.onTriggerEnter?.(entity);
                             } else {
-                                // STAY
-                                if (collisionResult.isTrigger) {
-                                    entity.onTriggerStay?.(other);
-                                    other.onTriggerStay?.(entity);
-                                } else {
-                                    entity.onCollisionStay?.(other, collisionResult.info);
-                                    other.onCollisionStay?.(entity, {
-                                        ...collisionResult.info,
-                                        normal: new Vector2(-collisionResult.info.normal.x, -collisionResult.info.normal.y)
-                                    });
-                                }
-                            }
-
-                            // Collect contact for solving
-                            if (!collisionResult.isTrigger) {
-                                contacts.push({
-                                    entityA: entity,
-                                    entityB: other,
-                                    info: collisionResult.info
+                                entity.onCollisionEnter?.(other, collisionResult.info);
+                                other.onCollisionEnter?.(entity, {
+                                    ...collisionResult.info,
+                                    normal: new Vector2(-collisionResult.info.normal.x, -collisionResult.info.normal.y)
                                 });
                             }
+                        } else {
+                            // STAY
+                            if (collisionResult.isTrigger) {
+                                entity.onTriggerStay?.(other);
+                                other.onTriggerStay?.(entity);
+                            } else {
+                                entity.onCollisionStay?.(other, collisionResult.info);
+                                other.onCollisionStay?.(entity, {
+                                    ...collisionResult.info,
+                                    normal: new Vector2(-collisionResult.info.normal.x, -collisionResult.info.normal.y)
+                                });
+                            }
+                        }
+
+                        // Collect contact for solving
+                        if (!collisionResult.isTrigger) {
+                            contacts.push({
+                                entityA: entity,
+                                entityB: other,
+                                info: collisionResult.info
+                            });
                         }
                     }
                 }

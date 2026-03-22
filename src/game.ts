@@ -63,6 +63,9 @@ export class Game {
             // Update game logic
             this.scene.update(dt);
 
+            // Update animators
+            this.scene.animationUpdate(dt);
+
             // Update physics info
             this.physics.update(this.scene.entities, dt);
 
