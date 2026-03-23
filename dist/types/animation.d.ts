@@ -3,11 +3,15 @@ export interface SpriteSheetOptions {
     texture: Texture;
     frameWidth: number;
     frameHeight: number;
+    width?: number;
+    height?: number;
 }
 export declare class SpriteSheet {
     texture: Texture;
     frameWidth: number;
     frameHeight: number;
+    width: number;
+    height: number;
     constructor(options: SpriteSheetOptions);
 }
 export interface AnimationOptions {

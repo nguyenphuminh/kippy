@@ -4,17 +4,23 @@ export interface SpriteSheetOptions {
     texture: Texture;
     frameWidth: number;
     frameHeight: number;
+    width?: number;
+    height?: number;
 }
 
 export class SpriteSheet {
     public texture: Texture;
     public frameWidth: number;
     public frameHeight: number;
+    public width: number;
+    public height: number;
 
     constructor(options: SpriteSheetOptions) {
         this.texture = options.texture;
         this.frameWidth = options.frameWidth;
         this.frameHeight = options.frameHeight;
+        this.width = options.width ?? options.frameWidth;
+        this.height = options.height ?? options.frameHeight;
     }
 }
 

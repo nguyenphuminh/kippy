@@ -50,13 +50,16 @@ export class Entity {
             const sx = (frame % cols) * spriteSheet.frameWidth;
             const sy = Math.floor(frame / cols) * spriteSheet.frameHeight;
 
+            const dw = spriteSheet.width ?? spriteSheet.frameWidth;
+            const dh = spriteSheet.height ?? spriteSheet.frameHeight;
+
             ctx.save();
             ctx.translate(this.position.x, this.position.y);
             ctx.rotate(this.rotation);
             ctx.drawImage(
                 spriteSheet.texture,
                 sx, sy, spriteSheet.frameWidth, spriteSheet.frameHeight,
-                -spriteSheet.frameWidth / 2, -spriteSheet.frameHeight / 2, spriteSheet.frameWidth, spriteSheet.frameHeight
+                -dw / 2, -dh / 2, dw, dh
             );
             ctx.restore();
         }
