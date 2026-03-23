@@ -327,7 +327,9 @@ import { SpriteSheet } from "kippy";
 const spriteSheet = new SpriteSheet({
     texture, // Similar to sprite texture
     frameWidth, // Width of each frame, type number
-    frameHeight // Height of each frame, type number
+    frameHeight, // Height of each frame, type number
+    width, // Width when render, default is frameWidth
+    height // Height when render, default is frameHeight
 });
 ```
 
