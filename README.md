@@ -1,4 +1,4 @@
-## Kippy
+![](./assets/logo.png)
 
 Kippy is a 2D JS game engine written purely for fun and simplicity. It currently utilizes the Canvas 2D context for rendering and aims to have a small set of APIs viable for game dev, but do expect a lot of components to change in the future.
 
