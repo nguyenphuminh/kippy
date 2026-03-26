@@ -171,24 +171,26 @@ export class SpatialGrid {
         }
     }
 
-    // Get nearby entities (checks 3x3 grid around entity)
+    // Get nearby entities
     getNearby(entity: Entity): Entity[] {
-        const centerX = Math.floor(entity.position.x / this.cellSize);
-        const centerY = Math.floor(entity.position.y / this.cellSize);
+        // Get bounds of entity ('s collider)
+        const bounds = this.getEntityBounds(entity);
 
+        // Check all cells it overlaps
+        const minCellX = Math.floor(bounds.minX / this.cellSize);
+        const maxCellX = Math.floor(bounds.maxX / this.cellSize);
+        const minCellY = Math.floor(bounds.minY / this.cellSize);
+        const maxCellY = Math.floor(bounds.maxY / this.cellSize);
+
+        // Collect all other entities of the same cells
         const nearby = new Set<Entity>();
-
-        // Check 3x3 grid of cells
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dy = -1; dy <= 1; dy++) {
-                const key = `${centerX + dx},${centerY + dy}`;
-                const cell = this.grid.get(key);
-
+        
+        for (let cx = minCellX; cx <= maxCellX; cx++) {
+            for (let cy = minCellY; cy <= maxCellY; cy++) {
+                const cell = this.grid.get(`${cx},${cy}`);
                 if (cell) {
-                    for (const e of cell) {
-                        if (e !== entity) {
-                            nearby.add(e);
-                        }
+                    for (const otherEntity of cell) {
+                        if (otherEntity !== entity) nearby.add(otherEntity);
                     }
                 }
             }
@@ -209,8 +211,8 @@ export class SpatialGrid {
                 maxY: entity.position.y + radius
             };
         } else if (entity.collider instanceof BoxCollider) {
-            const halfWidth = entity.collider.width;
-            const halfHeight = entity.collider.height;
+            const halfWidth = entity.collider.width / 2;
+            const halfHeight = entity.collider.height / 2;
 
             return {
                 minX: entity.position.x - halfWidth,
@@ -561,7 +563,7 @@ export class Physics {
                     if (overlapX < overlapY) {
                         const sign = delta.x < 0 ? -1 : 1;
                         const boxToCircle = new Vector2(sign, 0);
-                        normal = isCircleA ? boxToCircle.neg() : boxToCircle; // A→B
+                        normal = isCircleA ? boxToCircle.neg() : boxToCircle; // A->B
                         penetration = circle.radius + overlapX;
                         contact = new Vector2(boxPos.x + sign * halfW, circlePos.y);
                     } else {

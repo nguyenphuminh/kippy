@@ -130,6 +130,54 @@ const sprite = new Sprite({
 entity.sprite = sprite;
 ```
 
+### Animation
+
+First you create a sprite sheet that contains your frames:
+```js
+import { SpriteSheet } from "kippy";
+
+const spriteSheet = new SpriteSheet({
+    texture, // Similar to sprite texture
+    frameWidth, // Width of each frame, type number
+    frameHeight, // Height of each frame, type number
+    width, // Width when render, default is frameWidth
+    height // Height when render, default is frameHeight
+});
+```
+
+Then you create an animation object which defines the order of frame to play, fps, and whether to loop or not:
+```js
+import { Animation } from "kippy";
+
+const animation = new Animation({
+    spriteSheet, // A SpriteSheet instance
+    frames, // Order of frames, type number[]
+    fps, // Frames per second, type number
+    loop // Loop animation endlessly, type boolean
+});
+```
+
+Then you create an animator, attach it to an entity, and then play an animation:
+```js
+import { Animator } from "kippy";
+
+const animator = new Animator({
+    animations, // A Record<string, Animation> map that contains all animations
+    default // The animation that will be played first, type string
+});
+
+// Attach it to an entity
+entity.animator = animator
+
+// Play an animation
+entity.animator.play("animationName");
+
+// You can also call a handler when animation ends
+entity.animator.onEnd = function(name) {
+    // Do something
+}
+```
+
 ### Add controls
 
 Game controls like mouse presses, key presses, touch, and cursor tracking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
@@ -318,54 +366,6 @@ camera.zoom // Camera zoom level, default is 1
 
 // Convert a screen-based vector (mouse position for example) to world-based vector
 camera.screenToWorld(input.pointer); // Return new vector
-```
-
-### Animation
-
-First you create a sprite sheet that contains your frames:
-```js
-import { SpriteSheet } from "kippy";
-
-const spriteSheet = new SpriteSheet({
-    texture, // Similar to sprite texture
-    frameWidth, // Width of each frame, type number
-    frameHeight, // Height of each frame, type number
-    width, // Width when render, default is frameWidth
-    height // Height when render, default is frameHeight
-});
-```
-
-Then you create an animation object which defines the order of frame to play, fps, and whether to loop or not:
-```js
-import { Animation } from "kippy";
-
-const animation = new Animation({
-    spriteSheet, // A SpriteSheet instance
-    frames, // Order of frames, type number[]
-    fps, // Frames per second, type number
-    loop // Loop animation endlessly, type boolean
-});
-```
-
-Then you create an animator, attach it to an entity, and then play an animation:
-```js
-import { Animator } from "kippy";
-
-const animator = new Animator({
-    animations, // A Record<string, Animation> map that contains all animations
-    default // The animation that will be played first, type string
-});
-
-// Attach it to an entity
-entity.animator = animator
-
-// Play an animation
-entity.animator.play("animationName");
-
-// You can also call a handler when animation ends
-entity.animator.onEnd = function(name) {
-    // Do something
-}
 ```
 
 ### Audio

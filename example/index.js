@@ -1,6 +1,6 @@
 import { Game, Scene, Entity, RigidBody, CircleCollider, BoxCollider, Sprite, Vector2 } from "../dist/bundle.min.js";
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// Constants
 const GRAVITY        = 1800;
 const FLAP_VELOCITY  = -500;
 const PIPE_SPEED     = 220;
@@ -10,7 +10,7 @@ const BIRD_RADIUS    = 22;
 const PIPE_WIDTH     = 80;
 const GROUND_H       = 80;
 
-// ── Asset loading ────────────────────────────────────────────────────────────
+// Asset loading
 function loadImage(src) {
     return new Promise((resolve) => {
         const img = new Image();
@@ -20,7 +20,7 @@ function loadImage(src) {
     });
 }
 
-// ── UI refs ──────────────────────────────────────────────────────────────────
+// UI refs
 const scoreEl      = document.getElementById("score");
 const overlayEl    = document.getElementById("overlay");
 const titleEl      = document.getElementById("overlay-title");
@@ -55,7 +55,7 @@ function updateScore(n) {
     scoreEl.textContent = n;
 }
 
-// ── Scene ────────────────────────────────────────────────────────────────────
+// Scene
 class FlappyScene extends Scene {
     constructor(gameRef, assets) {
         super();
@@ -205,7 +205,7 @@ class FlappyScene extends Scene {
     }
 }
 
-// ── Bootstrap ────────────────────────────────────────────────────────────────
+// Bootstrap
 async function main() {
     const canvas = document.getElementById("canvas");
 
