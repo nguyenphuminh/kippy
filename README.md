@@ -92,13 +92,19 @@ A scene can have multiple entities like players, mobs, obstacles, etc in it. Thi
 import { Entity } from "kippy";
 
 const entity = new Entity({
+    // These are all optional, and can also be set later
+
+    // Graphics
     animator, // Entity's animator to be rendered, type Animator
     sprite, // Entity's sprite to be rendered, type Sprite
+    // Position
     position, // Entity's position (centered), type Vector2
     rotation, // Entity's rotation in radians, type number
+    // Physics
     body, // Entity's physical body, type EntityBody
     collider, // Entity's collider, type Collider
-
+    // Effects
+    glow
 });
 
 // Add it to a scene
@@ -371,6 +377,25 @@ camera.screenToWorld(input.pointer); // Return new vector
 ### Audio
 
 To be added, for now use web's built-in `Audio` class.
+
+### Effects
+
+Kippy comes with some graphical effects to make things look nicer :)
+
+#### Entity glow
+
+```js
+entity.glow = {
+    color, // Color code as string
+    bloom, // Glow bloom/range of spread
+    intensity, // Glow intensity/boldness
+}
+
+// You can also assign it during entity initialization in case you forgot
+const newEntity = new Entity({
+    glow: { /* Your config */ }
+});
+```
 
 ### Sleep system
 
