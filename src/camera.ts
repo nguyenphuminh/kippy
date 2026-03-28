@@ -22,7 +22,7 @@ export class Camera {
     }
 
     apply() {
-        const ctx = this.scene.ctx;
+        const ctx = this.scene.game?.ctx;
 
         if (ctx) {
             const cx = ctx.canvas.width / 2;
@@ -39,7 +39,7 @@ export class Camera {
     }
 
     screenToWorld(screenPos: Vector2): Vector2 {
-        const ctx = this.scene.ctx;
+        const ctx = this.scene.game?.ctx;
 
         if (ctx) {
             const cx = ctx.canvas.width / 2;

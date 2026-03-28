@@ -1,6 +1,6 @@
 {
   "name": "kippy",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Kippy 2D web game engine for JS",
   "keywords": [
     "kippy",
@@ -27,7 +27,7 @@
   "type": "module",
   "main": "./dist/bundle.min.js",
   "scripts": {
-    "build": "npx rollup -c"
+    "build": "rm -r ./dist & npx rollup -c"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
