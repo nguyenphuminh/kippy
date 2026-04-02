@@ -1,5 +1,5 @@
-import { Scene } from "./scene";
-import { Vector2 } from "./vector";
+import { Scene } from "./scene.js";
+import { Vector2 } from "./vector.js";
 export interface CameraOptions {
     position?: Vector2;
     rotation?: number;

@@ -1,4 +1,4 @@
-import { Texture } from "./sprite";
+import { Texture } from "./sprite.js";
 export interface SpriteSheetOptions {
     texture: Texture;
     frameWidth: number;

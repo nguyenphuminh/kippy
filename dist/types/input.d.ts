@@ -1,4 +1,4 @@
-import { Vector2 } from "./vector";
+import { Vector2 } from "./vector.js";
 export interface InputOptions {
     canvas: HTMLCanvasElement;
 }

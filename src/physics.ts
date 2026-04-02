@@ -1,5 +1,5 @@
-import { Entity } from "./entity";
-import { Vector2 } from "./vector";
+import { Entity } from "./entity.js";
+import { Vector2 } from "./vector.js";
 
 // Physical bodies
 export interface RigidBodyOptions {
