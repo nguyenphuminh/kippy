@@ -1,424 +1,127 @@
 <div align="center">
-	<img src="./assets/logo.png"/>
+	<br/>
+	<img src="./assets/extended-logo.png"/>
+	<br/>
+	<div><b>An experimental smart contract blockchain network</b></div>
+	<br/>
+	<a href="https://github.com/nguyenphuminh/JeChain/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg"/></a>
+	<a href="https://github.com/nguyenphuminh/JeChain/releases"><img src="https://img.shields.io/github/package-json/v/nguyenphuminh/JeChain?label=stable"></a>
+	<a href="https://github.com/nguyenphuminh/JeChain/blob/main/.github/PULL_REQUEST_TEMPLATE.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
+	<a href="https://github.com/nguyenphuminh/JeChain/stargazers"><img src="https://img.shields.io/github/stars/nguyenphuminh/JeChain?color=gold"></a>
 </div>
 
-Kippy is a 2D JS game engine written purely for fun and simplicity. It currently utilizes the Canvas 2D context for rendering and aims to have a small set of APIs viable for game dev, but do expect a lot of components to change in the future.
+## What is JeChain?
 
-## Usage
+JeChain is a blockchain network platform that supports smart contracts and can act as a payment system/cryptocurrency. It is originally and still is made for experimental and educational purposes, you can have a brief look at its core ideas through its [**outdated** and unfinished whitepaper](https://nguyenphuminh.github.io/jechain-whitepaper.pdf).
 
-Install through npm:
-```sh
-npm install kippy
+
+## Setup a node
+
+### Dependencies 
+
+* NodeJS v16 or higher.
+* Latest release of npm.
+
+### Requirements
+
+A system that is running Windows, Linux, or MacOS with a dual-core CPU and 8GB of RAM with a mediocre SSD/HDD should be enough.
+
+### Installation
+
+First, download the latest release from: https://github.com/nguyenphuminh/JeChain/releases.
+
+Extract the zip file, in the `JeChain` folder, open up your terminal and install the required packages through `npm`:
+
 ```
-
-then import, for example:
-```js
-import { Game, Scene, Entity } from "kippy";
-```
-
-or if you are on raw HTML5, you can pull from a cdn:
-```js
-import { Game, Scene, Entity } from "https://unpkg.com/kippy";
-```
-
-## Example
-
-There is a Flappy Bird game in `./example` for now. You can run it by cloning this repo, then install deps:
-```sh
 npm install
 ```
 
-and build:
-```sh
-npm run build
+### Generate your keys
+
+If you haven't had a JeChain key pair before, hop over to `./utils/`, on the command line, type:
+
+```
+node keygen.js
 ```
 
-and start Vite:
-```sh
-npx vite
-```
+And it will generate an address, a public key and a private key for you.
 
-## Tutorial
+### Configure your node
 
-Here is a vaguely-written tutorial for now:
+In `config.json`, change the props for your needs:
 
-### Initialize game
-
-First, prepare a canvas tag in your html file:
-```html
-<canvas></canvas>
-```
-
-Then mount your game there:
-```js
-import { Game } from "kippy";
-
-const canvas = document.querySelector("canvas");
-const game = new Game({
-    canvas
-});
-
-// Start the game loop
-game.start();
-
-// You can also swap canvas if you want
-// game.setCanvas(someOtherCanvas);
-```
-
-### Create a scene
-
-Here is how you can create a scene and load that scene into your game object:
-```js
-import { Scene } from "kippy";
-
-class Main extends Scene {
-    // Runs when this scene gets loaded into a game
-    init() {}
-    // Runs on every frame, dt is the time between each frame
-    update(dt) {}
-    // Runs when another scene replaces this scene in a game
-    exit() {}
-}
-
-// Create scene and load into game
-const main = new Main();
-game.setScene(main);
-```
-
-### Create an entity
-
-A scene can have multiple entities like players, mobs, obstacles, etc in it. This is how you can create an entity:
-```js
-import { Entity } from "kippy";
-
-const entity = new Entity({
-    // These are all optional, and can also be set later
-
-    // Graphics
-    animator, // Entity's animator to be rendered, type Animator
-    sprite, // Entity's sprite to be rendered, type Sprite
-    // Position
-    position, // Entity's position (centered), type Vector2
-    rotation, // Entity's rotation in radians, type number
-    // Physics
-    body, // Entity's physical body, type EntityBody
-    collider, // Entity's collider, type Collider
-    // Effects
-    glow
-});
-
-// Add it to a scene
-scene.addEntity(entity);
-// Remove it from a scene
-scene.removeEntity(entity);
-
-// These props contain movement info and you can mutate them to edit its position
-entity.position; // Initialized from the "position" param above, Vector2(0, 0) if not specified
-// You can mutate these directly:
-entity.position.x;
-entity.position.y;
-entity.rotation; // Initialized from the "rotation" param above, 0 if not specified
-```
-
-### Create a sprite
-
-A sprite represents what an entity looks like (the "graphics part"), and you can create a sprite like this:
-```js
-import { Sprite } from "kippy";
-
-const sprite = new Sprite({
-    texture, // Sprite's texture - HTMLImageElement, HTMLCanvasElement, OffscreenCanvas, ImageBitmap
-    width, // Sprite's width, type number
-    height // Sprite's height, type number
-});
-
-// Set sprite for an entity
-entity.sprite = sprite;
-```
-
-### Animation
-
-First you create a sprite sheet that contains your frames:
-```js
-import { SpriteSheet } from "kippy";
-
-const spriteSheet = new SpriteSheet({
-    texture, // Similar to sprite texture
-    frameWidth, // Width of each frame, type number
-    frameHeight, // Height of each frame, type number
-    width, // Width when render, default is frameWidth
-    height // Height when render, default is frameHeight
-});
-```
-
-Then you create an animation object which defines the order of frame to play, fps, and whether to loop or not:
-```js
-import { Animation } from "kippy";
-
-const animation = new Animation({
-    spriteSheet, // A SpriteSheet instance
-    frames, // Order of frames, type number[]
-    fps, // Frames per second, type number
-    loop // Loop animation endlessly, type boolean
-});
-```
-
-Then you create an animator, attach it to an entity, and then play an animation:
-```js
-import { Animator } from "kippy";
-
-const animator = new Animator({
-    animations, // A Record<string, Animation> map that contains all animations
-    default // The animation that will be played first, type string
-});
-
-// Attach it to an entity
-entity.animator = animator
-
-// Play an animation
-entity.animator.play("animationName");
-
-// You can also call a handler when animation ends
-entity.animator.onEnd = function(name) {
-    // Do something
-}
-```
-
-### Add controls
-
-Game controls like mouse presses, key presses, touch, and cursor tracking (in the game canvas, not the web window) can be done by using the input handler from your `game` instance:
-```js
-const input = game.input;
-```
-
-Then in a scene's `update` method, you can use these utilities to check for key presses:
-```js
-// Keyboard
-input.isKeyDown(/* Character/key here */); // true if key is held, false otherwise
-input.isKeyPressed(/* Character/key here */); // true if key is pressed, false otherwise
-input.isKeyReleased(/* Character/key here */); // true if key is released, false otherwise
-// Mouse/touch
-input.isPointerDown(/* 0 for left, 1 for right, 2 for touch */); // true if held, false otherwise
-input.isPointerPressed(/* 0 for left, 1 for right, 2 for touch */); // true if pressed, false otherwise
-input.isPointerReleased(/* 0 for left, 1 for right, 2 for touch */); // true if released, false otherwise
-// Mouse/touch position
-input.pointer; // Pointer's position vector
-input.pointer.x; // Current X position of mouse/touch
-input.pointer.y; // Current Y position of mouse/touch
-```
-
-### Vectors
-
-To work with positions and movements in Kippy, it is best to know about `Vector2` first. Positions, velocities, forces, etc are all represented as vectors in Kippy. And here are how you can create a 2D vector and some vector math utilities that come along with it:
-```js
-import { Vector2 } from "kippy";
-
-const vect = new Vector2(/* x coordinate, number */, /*y coordinate, number */);
-
-// Props
-vect.x; // X coordinate
-vect.y; // Y coordinate
-
-// Utilities
-vect.toString(); // Returns "Vector2(x, y)"
-vect.add(otherVect); // Add another vector and return the result vector
-vect.sub(otherVect); // Subtract another vector and return the result vector
-vect.mul(otherVect); // Multiply with another vector and return the result vector
-vect.div(otherVect); // Divide by another vector and return the result vector
-vect.neg(); // Negate and return the result vector
-vect.scale(scale); // Multiply with scale and return the result vector
-vect.magnitude(); // Return the magnitude/length of vector
-vect.magnitudeSquared(); // Return the squared magnitude/length of vector
-vect.normalize(); // Return the normalized vector by magnitude
-vect.dot(otherVect); // Return dot product with another vector
-vect.cross(otherVect); // Return cross product with another vector
-vect.project(otherVect); // Return projection on another vector
-vect.min(otherVect); // Return a new vector with min coordinates
-vect.max(otherVect); // Return a new vector with max coordinates
-vect.floor(); // Floor rounding
-vect.ceil(); // Ceil rounding
-vect.round(); // Normal rounding
-vect.distance(otherVect); // Return distance to another vector
-vect.distanceSquared(otherVect); // Return squared distance to another vector
-vect.copy(); // Return a copy (same coordinates, different reference)
-vect.lerp(otherVect, scale); // Apply linear interpolation and return
-vect.clamp(maxLength); // Clamp vector to have length below maxLength
-vect.rotate(angle); // Return rotated vector by provided angle
-vect.orthogonal(); // Return orthogonal vector of this vector
-vect.angle(); // Return angle of vector.
-vect.angleTo(otherVec); // Return angle between this and another vector
-vect.reflect(otherVect); // Return reflection/bounce back vector
-vect.equals(otherVect); // Check if two vectors are equal
-
-// Useful constants
-Vector2.ZERO; // Vector2(0, 0)
-Vector2.ONE; // Vector2(1, 1);
-Vector2.UP; // Vector2(0, -1);
-Vector2.DOWN; // Vector2(0, 1);
-Vector2.LEFT; // Vector2(-1, 0);
-Vector2.RIGHT; // Vector2(1, 0);
-```
-
-### Physics
-
-For movements, currently you can create a `RigidBody`:
-```js
-import { RigidBody } from "kippy";
-
-// Create a rigid body
-const rigidBody = new RigidBody({
-    velocity, // Entity's velocity vector, type Vector2
-    rotationVelocity, // Entity's angular/rotation velocity, type number
-    mass, // Entity's mass, type number
-    inertia, // Entity's inertia, type number
-    force, // Entity's force vector, type Vector2
-    torque, // Entity's torque/rotational force, type number
-    restitution // Entity's restitution for collision bounce back, type number
-});
-
-// Attach body to an entity
-entity.body = rigidBody;
-
-// And you can mutate these props to update movement every frame
-entity.body.velocity; // Set with the matching parameter above, default is Vector2(0, 0)
-entity.body.rotationVelocity; // Set with the matching parameter above, default is 0
-entity.body.mass; // Set with the matching parameter above, default is 1
-entity.body.inertia; // Set with the matching parameter above, default is 1
-// Note that forces are reset after every frame
-entity.body.force; // Set with the matching parameter above, default is Vector2(0, 0)
-entity.body.torque; // Set with the matching parameter above, default is 0
-entity.body.restitution; // Set with the matching parameter above, default is 0
-```
-
-For collisions, you can create a `CircleCollider` for now:
-```js
-import { CircleCollider } from "kippy";
-
-const collider = new CircleCollider({
-    radius, // Circle collider's radius, type number
-    offset, // Offset from entity's position, type Vector2
-    isTrigger, // If true, trigger callbacks are called and collision physics like bouncing 
-               // will not apply. Otherwise, collision callbacks are called and physics apply
-    layer, // A bit mask to determine what collision layer this collider is at
-    mask, // A bit mask to check what colliders to collide
-});
-
-// Attach collider to an entity
-entity.collider = collider;
-
-// You can mutate these props to configure the collider
-collider.radius; // Set with the matching parameter above, required
-collider.offset; // Set with the matching parameter above, default is Vector2(0, 0)
-collider.isTrigger; // Set with the matching parameter above, default is false
-collider.layer; // Set with the matching parameter above, default is (1 << 0)
-collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
-```
-
-or a `BoxCollider`:
-```js
-import { BoxCollider } from "kippy";
-
-const collider = new BoxCollider({
-    width, // Circle collider's width, type number
-    height, // Circle collider's height, type number
-    offset, // Offset from entity's position, type Vector2
-    isTrigger, // If true, trigger callbacks are called and collision physics like bouncing 
-               // will not apply. Otherwise, collision callbacks are called and physics apply
-    layer, // A bit mask to determine what collision layer this collider is at
-    mask, // A bit mask to check what colliders to collide
-});
-
-// You can mutate these props to configure the box collider
-collider.width; // Set with the matching parameter above, required
-collider.height; // Set with the matching parameter above, required
-collider.offset; // Set with the matching parameter above, default is Vector2(0, 0)
-collider.isTrigger; // Set with the matching parameter above, default is false
-collider.layer; // Set with the matching parameter above, default is (1 << 0)
-collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
-```
-
-And you can handle when two objects collide:
-```js
-collider.onCollisionEnter = (other, info) => {};
-collider.onCollisionStay = (other, info) => {};
-collider.onCollisionExit = (other, info) => {};
-collider.onTriggerEnter = (other) => {};
-collider.onTriggerStay = (other) => {};
-collider.onTriggerExit = (other) => {};
-```
-
-`info` has the structure of:
 ```js
 {
-    normal, // Vector2
-    penetration, // number
-    contact, // Vector2
+    "PORT": /*PORT that your node will run on, default is 3000*/,
+    "RPC_PORT": /*PORT that the RPC server will run on, default is 5000*/,
+    "PEERS": /*An array containing peers' address that the node will connect with, default is an empty array*/, 
+    "MY_ADDRESS": /*A string containing the node's address, default is "localhost:3000"*/,
+    "PRIVATE_KEY": /*A string containing a private key*/,
+    "ENABLE_MINING": /*Leave true if you want to mine, default is false*/
+    "ENABLE_LOGGING": /*Leave true if you want to log out contract logs, default is false*/,
+    "ENABLE_RPC": /*Leave true if you want to run a RPC server, default is false*/,
+    "ENABLE_CHAIN_REQUEST": /*Leave true if you want to sync chain from others, default is false*/
 }
 ```
 
-### Camera
+To see an example, `config.json` already has some data set for you to have a look at.
 
-The camera decides what part of your game world gets rendered. Note that unlike most camera implementations of which positions are centered, Kippy's camera position is at the top-left of the camera. For example, camera at (0,0) and entity at (0,0) in Godot would show the entity at the center, while the same setup in Kippy would show the entity at the top-left. This is to be more aligned with how web and canvas positioning works.
+### Running the node
 
-The camera is available for use through every scene object:
-```js
-// Get camera
-const camera = scene.camera;
+After everything is all set, simply type `node .` to run the node.
 
-// The camera has these props to manage it:
-camera.position; // The position vector of the camera, default is Vector2(0, 0)
-camera.rotation; // Rotation of the camera, default is 0
-camera.zoom // Camera zoom level, default is 1
+### Interacting with the node through RPC apis
 
-// Convert a screen-based vector (mouse position for example) to world-based vector
-camera.screenToWorld(input.pointer); // Return new vector
-```
+This process will require you to run an RPC server, basically leave `true` in `ENABLE_RPC` in `config.json` to enable it.
 
-### Audio
+To properly interact with the node, you should use the RPC apis, especially if you are creating dapps. To get started, check out [docs for RPC APIs here.](./RPC.md)
 
-To be added, for now use web's built-in `Audio` class.
+**Note: This feature is still in its early stages, things might change when a stable release is ready.**
 
-### Effects
+### Run JeChain node publicly
 
-Kippy comes with some graphical effects to make things look nicer :)
+Just do some port-forwarding, drop your public IP + the port you forwarded in and you are all set!
 
-#### Entity glow
+If you don't know how to forward port, just search it up online, each router model should have its own way to do port-forwarding.
 
-```js
-entity.glow = {
-    color, // Color code as string
-    bloom, // Glow bloom/range of spread
-    intensity, // Glow intensity/boldness
-}
+### The JeChain network?
 
-// You can also assign it during entity initialization in case you forgot
-const newEntity = new Entity({
-    glow: { /* Your config */ }
-});
-```
+Note that a blockchain network is formed when a lot of computers run nodes and communicate with each other. An official "JeChain network" has not existed yet, the only thing we currently have is the node software. But hey, if you want to run an experimental test network with your friends, do it! Hit me up if you do, so I can run a node to join in your network 😉.
 
-### Sleep system
 
-When a body's velocity is too low for too long, the body will enter sleep state, which means its position will not be affected by the physics engine until a force is applied, a collision happens, or the velocity is above threshold again, this is to prevent jittering and optimize performance.
+## Smart contracts?
 
-You can configure it inside `RigidBody`:
-```js
-const rigidBody = new RigidBody({
-    sleepThreshold, // The low threshold velocity to enter sleep state, type number
-    sleepTimeThreshold, // The duration of sustained low velocity to enter sleep state, type number
-    isSleeping, // Flag to set sleep state, type boolean
-    sleepTimer // Current sleep timer, you probably don't need this
-});
+Smart contract is still a fairly new feature in JeChain. It is only a proof of concept currently and is likely going to change in the future, but for now, you can read [this document](./CONTRACT.md) on creating smart contracts using a small language I have created called `jelscript`.
 
-// You can mutate these to change sleep configuration:
-rigidBody.sleepThreshold; // Set with the param above, default is 0.1
-rigidBody.sleepTimeThreshold; // Set with the param above, default is 0.5
-rigidBody.isSleeping; // Set with the param above, default is false
-rigidBody.sleepTimer; // Set with the param above, default is 0
-```
+Remember to only use it for experimental purposes, I can not guarantee that this feature will be changed or not in the future. The language is also really limited and far from ready.
 
-## Copyrights and License
 
-Copyrights © 2026 Nguyen Phu Minh.
+## How "ready" is JeChain?
 
-This project is licensed under the Apache 2.0 license.
+JeChain is currently at the stage of "having all the basic things work", there are a lot of optimizations and things to implement to make it even near production-ready. To see what I am doing, check out JeChain's todo list: https://github.com/nguyenphuminh/JeChain/projects/3
+
+### What do we currently have specifically?
+
+* A simple P2P client for messaging in the network, with basic blocks/transactions propagation, block sync, peer discovery, etc.
+* Basic data structures and serialization for transactions and blocks, with all the necessary constructs included like transaction signing, transaction/block verification, etc.
+* PoW-based consensus with proper difficulty adjustment and built-in mining software.
+* A runtime environment that can be used as a payment system/cryptocurrency or application platform with its smart contract support through a simple interpreted language.
+* Transaction trie and storage trie that can be used for pruning/light client/safe data request in the future.
+* An RPC server for applications (e.g. wallets) to interact with the blockchain data/network.
+
+
+## Support the project!
+
+I have been maintaining the project in my free time on my own. A blockchain client is really a lot of work for just one person, so if you like JeChain and want to support, you can just leave a star, feel free to open issues and pull requests and watch the projects for upcoming updates!
+
+
+## Using the project's source code
+
+JeChain is 100% open-source, but if you are integrating its source code into your own project, it would be lovely if you credit the original JeChain, I would really appreciate it!
+
+
+## Copyright and License
+
+Copyright © 2021 Nguyen Phu Minh.
+
+This project is licensed under the Apache 2.0 License.
