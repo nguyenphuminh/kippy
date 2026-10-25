@@ -10,6 +10,7 @@ export declare class Game {
     scene?: Scene;
     input: Input;
     lastTime: number;
+    acc: number;
     paused: boolean;
     constructor(options: GameOptions);
     setCanvas(canvas: HTMLCanvasElement): void;

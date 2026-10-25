@@ -40,7 +40,7 @@ export declare class Animator {
     elapsed: number;
     onEnd?: (name: string) => void;
     constructor(options: AnimatorOptions);
-    play(animation: string): void;
+    play(animation: string, restart?: boolean): void;
     update(dt: number): void;
     get currentFrame(): number;
 }

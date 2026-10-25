@@ -19,65 +19,56 @@ export class Input {
 
     constructor(options: InputOptions) {
         this.canvas = options.canvas;
+        this.canvas.style.touchAction = "none"; // prevent scrolling/zooming while touching
 
         // Keyboard
         window.addEventListener("keydown", (e: KeyboardEvent) => {
-            if (!this.keys.has(e.key)) {
-                this.keysPressed.add(e.key);
-            }
-            this.keys.add(e.key);
+            if (!e.repeat) this.keysPressed.add(e.code);
+            this.keys.add(e.code);
         });
 
         window.addEventListener("keyup", (e: KeyboardEvent) => {
-            this.keys.delete(e.key);
-            this.keysReleased.add(e.key);
+            this.keys.delete(e.code);
+            this.keysReleased.add(e.code);
         });
 
         // Mouse and touch
-        this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
-            const rect = this.canvas.getBoundingClientRect();
-            this.pointer.x = e.clientX - rect.left;
-            this.pointer.y = e.clientY - rect.top;
-        });
+        this.canvas.addEventListener("pointermove", (e) => this.updatePointer(e));
 
-        this.canvas.addEventListener("mousedown", (e: MouseEvent) => {
-            if (!this.pointers.has(e.button)) {
-                this.pointersPressed.add(e.button);
-            }
+        this.canvas.addEventListener("pointerdown", (e) => {
+            this.updatePointer(e);
+            this.canvas.setPointerCapture(e.pointerId);
+            if (!this.pointers.has(e.button)) this.pointersPressed.add(e.button);
             this.pointers.add(e.button);
         });
 
-        this.canvas.addEventListener("mouseup", (e: MouseEvent) => {
+        const release = (e: PointerEvent) => {
+            this.updatePointer(e);
             this.pointers.delete(e.button);
             this.pointersReleased.add(e.button);
-        });
+        };
 
-        this.canvas.addEventListener("touchmove", (e: TouchEvent) => {
-            e.preventDefault();
-            const rect = this.canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            this.pointer.x = touch.clientX - rect.left;
-            this.pointer.y = touch.clientY - rect.top;
-        });
-
-        this.canvas.addEventListener("touchstart", (e: TouchEvent) => {
-            e.preventDefault();
-            if (!this.pointers.has(2)) {
-                this.pointersPressed.add(2);
-            }
-            this.pointers.add(2);
-        });
-
-        this.canvas.addEventListener("touchend", (e: TouchEvent) => {
-            e.preventDefault();
-            this.pointers.delete(2);
-            this.pointersReleased.add(2);
-        });
+        this.canvas.addEventListener("pointerup", release);
+        this.canvas.addEventListener("pointercancel", release);
 
         // Prevent right-click menu
         this.canvas.addEventListener("contextmenu", (e: MouseEvent) => {
             e.preventDefault();
         });
+
+        // If tab is switched, input handling must end immediately
+        window.addEventListener("blur", () => {
+            for (const k of this.keys) this.keysReleased.add(k);
+            for (const b of this.pointers) this.pointersReleased.add(b);
+            this.keys.clear();
+            this.pointers.clear();
+        });
+    }
+
+    private updatePointer(e: PointerEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.pointer.x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+        this.pointer.y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
     }
 
     // Called every frames

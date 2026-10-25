@@ -52,20 +52,6 @@ export abstract class Scene {
         }
     }
 
-    runSystems(dt: number) {
-        // Update game logic
-        this.update(dt);
-
-        // Update animators
-        this.animationUpdate(dt);
-
-        // Update physics info
-        this.physics.update(this.entities, dt);
-
-        // Render
-        this.render();
-    }
-
     // User-defined methods
     init() { }
     update(deltaTime: number) { }

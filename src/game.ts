@@ -1,6 +1,8 @@
 import { Input } from "./input.js";
 import { Scene } from "./scene.js";
 
+const STEP = 1 / 60;
+
 export interface GameOptions {
     canvas: HTMLCanvasElement;
     input?: Input;
@@ -12,6 +14,7 @@ export class Game {
     public scene?: Scene;
     public input: Input;
     public lastTime = 0;
+    public acc = 0;
     public paused = false;
 
     constructor(options: GameOptions) {
@@ -57,17 +60,27 @@ export class Game {
 
         // Delta time calculation
         if (this.lastTime === 0) this.lastTime = timestamp;
-        const dt = (timestamp - this.lastTime) / 1000;
+        let dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
+        dt = Math.min(Math.max(dt, 0), 0.25);
 
         // Scene update
         if (this.scene) {
-            // Update scene
-            this.scene.runSystems(dt);
-            // Update input
-            this.input.update();
-        } else {
-            throw new Error("Can not run game loop without a scene");
+            this.acc += dt;
+
+            while (this.acc >= STEP) {
+                // Update game logic
+                this.scene.update(STEP);
+                // Update animators
+                this.scene.animationUpdate(STEP);
+                // Update physics info
+                this.scene.physics.update(this.scene.entities, STEP);
+                // Update inputs
+                this.input.update();
+                this.acc -= STEP;
+            }
+
+            this.scene.render();
         }
 
         // Loop

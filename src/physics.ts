@@ -201,28 +201,20 @@ export class SpatialGrid {
 
     // Helper to get entity bounds
     getEntityBounds(entity: Entity) {
+        if (!entity.collider) throw new Error("Collider type not supported");
+
+        const center = entity.position.add(entity.collider.offset);
+
         if (entity.collider instanceof CircleCollider) {
-            const radius = entity.collider.radius;
-
-            return {
-                minX: entity.position.x - radius,
-                maxX: entity.position.x + radius,
-                minY: entity.position.y - radius,
-                maxY: entity.position.y + radius
-            };
+            const r = entity.collider.radius;
+            return { minX: center.x - r, maxX: center.x + r, minY: center.y - r, maxY: center.y + r };
         } else if (entity.collider instanceof BoxCollider) {
-            const halfWidth = entity.collider.width / 2;
-            const halfHeight = entity.collider.height / 2;
-
-            return {
-                minX: entity.position.x - halfWidth,
-                maxX: entity.position.x + halfWidth,
-                minY: entity.position.y - halfHeight,
-                maxY: entity.position.y + halfHeight
-            }
-        } else {
-            throw new Error("Collider type not supported");
+            const hw = entity.collider.width / 2;
+            const hh = entity.collider.height / 2;
+            return { minX: center.x - hw, maxX: center.x + hw, minY: center.y - hh, maxY: center.y + hh };
         }
+
+        throw new Error("Collider type not supported");
     }
 }
 

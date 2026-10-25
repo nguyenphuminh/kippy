@@ -74,7 +74,7 @@ import { Scene } from "kippy";
 class Main extends Scene {
     // Runs when this scene gets loaded into a game
     init() {}
-    // Runs on every frame, dt is the time between each frame
+    // Runs 60 times per second at a fixed timestep, and dt is always 1/60
     update(dt) {}
     // Runs when another scene replaces this scene in a game
     exit() {}
@@ -177,6 +177,8 @@ entity.animator = animator
 
 // Play an animation
 entity.animator.play("animationName");
+// If you want to force restart the animation, you can pass true as second param:
+entity.animator.play("animationName", true);
 
 // You can also call a handler when animation ends
 entity.animator.onEnd = function(name) {
@@ -193,14 +195,14 @@ const input = game.input;
 
 Then in a scene's `update` method, you can use these utilities to check for key presses:
 ```js
-// Keyboard
-input.isKeyDown(/* Character/key here */); // true if key is held, false otherwise
-input.isKeyPressed(/* Character/key here */); // true if key is pressed, false otherwise
-input.isKeyReleased(/* Character/key here */); // true if key is released, false otherwise
-// Mouse/touch
-input.isPointerDown(/* 0 for left, 1 for right, 2 for touch */); // true if held, false otherwise
-input.isPointerPressed(/* 0 for left, 1 for right, 2 for touch */); // true if pressed, false otherwise
-input.isPointerReleased(/* 0 for left, 1 for right, 2 for touch */); // true if released, false otherwise
+// Keyboard, using physical key names: "KeyA", "Digit1", "Space", "ArrowUp", "ShiftLeft",...
+// These follow key position, so WASD stays in the same place on any keyboard layout
+input.isKeyDown("KeyW");
+input.isKeyPressed("Space");
+input.isKeyReleased("ArrowUp");
+// Mouse/touch: 0 = left button, touch or pen (default), 1 = middle, 2 = right
+input.isPointerDown();
+input.isPointerPressed(2);
 // Mouse/touch position
 input.pointer; // Pointer's position vector
 input.pointer.x; // Current X position of mouse/touch
@@ -290,7 +292,7 @@ entity.body.torque; // Set with the matching parameter above, default is 0
 entity.body.restitution; // Set with the matching parameter above, default is 0
 ```
 
-For collisions, you can create a `CircleCollider` for now:
+For collisions, you can create a `CircleCollider`:
 ```js
 import { CircleCollider } from "kippy";
 
@@ -319,8 +321,8 @@ or a `BoxCollider`:
 import { BoxCollider } from "kippy";
 
 const collider = new BoxCollider({
-    width, // Circle collider's width, type number
-    height, // Circle collider's height, type number
+    width, // Box collider's width, type number
+    height, // Box collider's height, type number
     offset, // Offset from entity's position, type Vector2
     isTrigger, // If true, trigger callbacks are called and collision physics like bouncing 
                // will not apply. Otherwise, collision callbacks are called and physics apply
@@ -339,12 +341,12 @@ collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
 
 And you can handle when two objects collide:
 ```js
-collider.onCollisionEnter = (other, info) => {};
-collider.onCollisionStay = (other, info) => {};
-collider.onCollisionExit = (other, info) => {};
-collider.onTriggerEnter = (other) => {};
-collider.onTriggerStay = (other) => {};
-collider.onTriggerExit = (other) => {};
+entity.onCollisionEnter = (other, info) => {};
+entity.onCollisionStay = (other, info) => {};
+entity.onCollisionExit = (other, info) => {};
+entity.onTriggerEnter = (other) => {};
+entity.onTriggerStay = (other) => {};
+entity.onTriggerExit = (other) => {};
 ```
 
 `info` has the structure of:
