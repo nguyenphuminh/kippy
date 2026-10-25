@@ -12,6 +12,7 @@ export declare class Input {
     pointersPressed: Set<number>;
     pointersReleased: Set<number>;
     constructor(options: InputOptions);
+    private updatePointer;
     update(): void;
     isKeyDown(key: string): boolean;
     isKeyPressed(key: string): boolean;

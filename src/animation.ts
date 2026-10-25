@@ -70,7 +70,9 @@ export class Animator {
         this.currentAnimationName = options.default;
     }
 
-    play(animation: string) {
+    play(animation: string, restart = false) {
+        if (animation === this.currentAnimationName && !restart) return;
+
         this.currentAnimation = this.animations[animation];
         this.currentAnimationName = animation;
         this.frameIndex = 0;

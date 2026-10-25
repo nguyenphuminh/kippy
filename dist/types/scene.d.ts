@@ -11,7 +11,6 @@ export declare abstract class Scene {
     removeEntity(entity: Entity): void;
     animationUpdate(deltaTime: number): void;
     render(): void;
-    runSystems(dt: number): void;
     init(): void;
     update(deltaTime: number): void;
     exit(): void;

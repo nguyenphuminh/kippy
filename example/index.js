@@ -160,7 +160,7 @@ class FlappyScene extends Scene {
 
     update(dt) {
         const input   = this.input;
-        const flapped = input.isKeyPressed(" ") || input.isPointerPressed(0);
+        const flapped = input.isKeyPressed("Space") || input.isPointerPressed(0);
 
         if (this.dead) {
             if (flapped) {
