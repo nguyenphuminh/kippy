@@ -1,12 +1,77 @@
 import { Animator } from "./animation.js";
 import { Collider, CollisionInfo, EntityBody } from "./physics.js";
-import { Sprite } from "./sprite.js";
+import { Sprite, Texture } from "./sprite.js";
 import { Vector2 } from "./vector.js";
 
 export interface GlowEffect {
     color: string;
     bloom: number;
     intensity: number;
+}
+
+export interface FrameSource {
+    texture: Texture;
+    sx: number;
+    sy: number;
+    sw: number;
+    sh: number;
+    dw: number;
+    dh: number;
+}
+
+// Baked glow images, shared by every entity that draws the same frame with the same glow
+const glowCache = new WeakMap<Texture, Map<string, { image: OffscreenCanvas; pad: number }>>();
+ 
+function getGlowImage(frame: FrameSource, glow: GlowEffect) {
+    let byTexture = glowCache.get(frame.texture);
+
+    if (!byTexture) {
+        byTexture = new Map();
+        glowCache.set(frame.texture, byTexture);
+    }
+ 
+    const key = (
+        `${frame.sx},` +
+        `${frame.sy},` +
+        `${frame.sw},` +
+        `${frame.sh},` +
+        `${frame.dw},` +
+        `${frame.dh},` +
+        `${glow.color},` +
+        `${glow.bloom},` +
+        `${glow.intensity}`
+    );
+    let baked = byTexture.get(key);
+ 
+    if (!baked) {
+        // A glow of which settings change every frame would add a new entry every frame
+        if (byTexture.size >= 256) byTexture.clear();
+ 
+        const pad = Math.ceil(glow.bloom * 2);
+        const image = new OffscreenCanvas(Math.ceil(frame.dw) + pad * 2, Math.ceil(frame.dh) + pad * 2);
+        const g = image.getContext("2d")!;
+        g.shadowColor = glow.color;
+        g.shadowBlur = glow.bloom;
+ 
+        for (let i = 0; i < glow.intensity; i++) {
+            g.drawImage(
+                frame.texture,
+                frame.sx,
+                frame.sy,
+                frame.sw,
+                frame.sh,
+                pad,
+                pad,
+                frame.dw,
+                frame.dh
+            );
+        }
+ 
+        baked = { image, pad };
+        byTexture.set(key, baked);
+    }
+ 
+    return baked;
 }
 
 export interface EntityOptions {
@@ -50,55 +115,70 @@ export class Entity {
     onTriggerEnter?: (other: Entity) => void;
     onTriggerStay?: (other: Entity) => void;
     onTriggerExit?: (other: Entity) => void;
-
-    // Render
-    drawSelf(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
+    
+    // The part of the texture to draw this frame, and the size to draw it at
+    getFrame(): FrameSource | null {
         if (this.animator) {
-            const animation = this.animator.currentAnimation;
-            const spriteSheet = animation.spriteSheet;
+            const ss = this.animator.currentAnimation.spriteSheet;
             const frame = this.animator.currentFrame;
-            const cols = Math.floor(spriteSheet.texture.width / spriteSheet.frameWidth);
-            const sx = (frame % cols) * spriteSheet.frameWidth;
-            const sy = Math.floor(frame / cols) * spriteSheet.frameHeight;
-            const dw = spriteSheet.width ?? spriteSheet.frameWidth;
-            const dh = spriteSheet.height ?? spriteSheet.frameHeight;
-            ctx.drawImage(spriteSheet.texture, sx, sy, spriteSheet.frameWidth, spriteSheet.frameHeight, -dw / 2, -dh / 2, dw, dh);
-        } else if (this.sprite) {
-            ctx.drawImage(this.sprite.texture, -this.sprite.width / 2, -this.sprite.height / 2, this.sprite.width, this.sprite.height);
+            const cols = Math.floor(ss.texture.width / ss.frameWidth);
+            
+            return {
+                texture: ss.texture,
+                sx: (frame % cols) * ss.frameWidth,
+                sy: Math.floor(frame / cols) * ss.frameHeight,
+                sw: ss.frameWidth,
+                sh: ss.frameHeight,
+                dw: ss.width,
+                dh: ss.height,
+            };
         }
+ 
+        if (this.sprite) {
+            const texture = this.sprite.texture;
+            
+            return {
+                texture,
+                sx: 0,
+                sy: 0,
+                sw: texture.width,
+                sh: texture.height,
+                dw: this.sprite.width,
+                dh: this.sprite.height
+            };
+        }
+ 
+        return null;
     }
 
     render(ctx: CanvasRenderingContext2D) {
+        const frame = this.getFrame();
+        if (!frame) return;
+
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
 
         if (this.glow) {
-            const ss = this.animator?.currentAnimation.spriteSheet;
-            const width = ss ? (ss.width ?? ss.frameWidth) : (this.sprite?.width ?? 0);
-            const height = ss ? (ss.height ?? ss.frameHeight) : (this.sprite?.height ?? 0);
-
-            const pad = this.glow.bloom * 2;
-            const w = width + pad;
-            const h = height + pad;
-
-            const off = new OffscreenCanvas(w, h);
-            const offCtx = off.getContext("2d")!;
-            offCtx.translate(w / 2, h / 2);
-            this.drawSelf(offCtx);
-
-            ctx.shadowColor = this.glow.color;
-            ctx.shadowBlur = this.glow.bloom;
+            const { image, pad } = getGlowImage(frame, this.glow);
             
-            for (let i = 0; i < this.glow.intensity; i++) {
-                ctx.drawImage(off, -w / 2, -h / 2);
-            }
-
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
+            ctx.drawImage(
+                image,
+                -frame.dw / 2 - pad,
+                -frame.dh / 2 - pad
+            );
         }
 
-        this.drawSelf(ctx);
+        ctx.drawImage(
+            frame.texture,
+            frame.sx,
+            frame.sy,
+            frame.sw,
+            frame.sh,
+            -frame.dw / 2,
+            -frame.dh / 2,
+            frame.dw, frame.dh
+        );
         ctx.restore();
     }
 }

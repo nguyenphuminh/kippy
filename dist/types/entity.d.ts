@@ -1,11 +1,20 @@
 import { Animator } from "./animation.js";
 import { Collider, CollisionInfo, EntityBody } from "./physics.js";
-import { Sprite } from "./sprite.js";
+import { Sprite, Texture } from "./sprite.js";
 import { Vector2 } from "./vector.js";
 export interface GlowEffect {
     color: string;
     bloom: number;
     intensity: number;
+}
+export interface FrameSource {
+    texture: Texture;
+    sx: number;
+    sy: number;
+    sw: number;
+    sh: number;
+    dw: number;
+    dh: number;
 }
 export interface EntityOptions {
     animator?: Animator;
@@ -31,6 +40,6 @@ export declare class Entity {
     onTriggerEnter?: (other: Entity) => void;
     onTriggerStay?: (other: Entity) => void;
     onTriggerExit?: (other: Entity) => void;
-    drawSelf(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D): void;
+    getFrame(): FrameSource | null;
     render(ctx: CanvasRenderingContext2D): void;
 }
