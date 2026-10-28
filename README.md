@@ -378,7 +378,73 @@ camera.screenToWorld(input.pointer); // Return new vector
 
 ### Audio
 
-To be added, for now use web's built-in `Audio` class.
+You can create a sound and play it using the `Sound` class:
+```js
+// Create a Sound object
+const sound = new Sound({
+    src, // String URL to sound file or a preloaded AudioBuffer object
+    volume, // Volume to play in, default is 1
+    loop, // Choose whether to loop, default is false
+    bus, // Audio bus name, default is "sfx"
+    maxInstances // Maximum number of playable instances of this sound, default is 8
+})
+
+// Load sound
+await sound.load();
+// You can also load multiple sounds at once
+await Sound.loadAll([sound1, sound2, sound3]);
+
+// Play sound, returning a SoundInstance object, or null if audio is not loaded yet
+const soundInstance = sound.play({
+    volume, // Volume multiplier against the base volume, default is 1
+    pitch, // Sound pitch, default is 1
+    loop, // Choose whether to loop for this play, default is sound.loop
+    offset, // Timestamp offset in the audio file, default is 0
+    fadeIn, // Ramps volume up over this many seconds, default is 0
+});
+
+// Stop this sound instance
+soundInstance.stop();
+// Pause this sound instance
+soundInstance.pause();
+// Resume
+soundInstance.resume();
+// Fade to silence over a duration then stop
+soundInstance.fadeOut(duration);
+// Fade to specified volume over a duration
+soundInstance.fadeTo(volume, duration);
+// Configure sound options
+soundInstance.volume = someVolume;
+soundInstance.pitch = somePitch;
+// Some useful getters
+soundInstance.state; // current state, can be "playing", "paused", or "stopped"
+soundInstance.position; // current position in audio source
+soundInstance.duration; // duration
+// On-end event handler, called when finished playing:
+soundInstance.onEnd = () => {
+    // Do something
+}
+
+// Stop all instances of this sound
+sound.stopAll();
+```
+
+You can also control sounds globally through `game.audio`:
+```js
+// Configure global sound options
+game.audio.volume = someVolume;
+game.audio.muted = trueOrFalse;
+// Pause all sound instances
+game.audio.pause();
+// Resume
+game.audio.resume();
+// Stop all sound instances
+game.audio.stopAll();
+
+// You can also configure sound options for a set of sound instances by doing it through a bus they share:
+game.audio.bus("busName").volume = someVolume;
+game.audio.bus("busName").muted = trueOrFalse;
+```
 
 ### Effects
 

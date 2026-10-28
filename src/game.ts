@@ -1,3 +1,4 @@
+import { audio } from "./audio.js";
 import { Input } from "./input.js";
 import { Scene } from "./scene.js";
 
@@ -13,6 +14,7 @@ export class Game {
     public ctx: CanvasRenderingContext2D;
     public scene?: Scene;
     public input: Input;
+    public audio = audio;
     public lastTime = 0;
     public acc = 0;
     public paused = false;
@@ -21,6 +23,7 @@ export class Game {
         this.canvas = options.canvas;
         this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
         this.input = options.input ?? new Input({ canvas: this.canvas });
+        this.audio.listen();
     }
 
     setCanvas(canvas: HTMLCanvasElement) {
