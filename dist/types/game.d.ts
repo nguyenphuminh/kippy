@@ -9,6 +9,7 @@ export declare class Game {
     ctx: CanvasRenderingContext2D;
     scene?: Scene;
     input: Input;
+    audio: import("./audio.js").AudioManager;
     lastTime: number;
     acc: number;
     paused: boolean;
