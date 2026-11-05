@@ -86,6 +86,7 @@ export interface CollisionInfo {
     penetration: number;
     contact: Vector2;
     accumulatedNormalImpulse: number;
+    bounceVelocity?: number;
 }
 export interface CollisionResult {
     isTrigger: boolean;
@@ -97,5 +98,13 @@ export declare class Physics {
     entityCount: number;
     update(entities: Entity[], dt: number): void;
     checkCollision(entityA: Entity, entityB: Entity): CollisionResult;
-    resolveCollision(entityA: Entity, entityB: Entity, info: CollisionInfo, dt: number): void;
+    resolveCollision(entityA: Entity, entityB: Entity, info: CollisionInfo): void;
+    correctPositions(contacts: Array<{
+        entityA: Entity;
+        entityB: Entity;
+        info: CollisionInfo;
+    }>): void;
+    getWarmStartImpulse(entityA: Entity, entityB: Entity, normal: Vector2): number;
+    warmStart(entityA: Entity, entityB: Entity, info: CollisionInfo): void;
+    prepareContact(entityA: Entity, entityB: Entity, info: CollisionInfo): void;
 }

@@ -223,6 +223,7 @@ export interface CollisionInfo {
     penetration: number;  // How deep they overlap
     contact: Vector2;     // Contact point
     accumulatedNormalImpulse: number; // Accumulated impulse
+    bounceVelocity?: number; // Separating speed to reach, measured before warm starting
 }
 
 export interface CollisionResult {
@@ -359,9 +360,17 @@ export class Physics {
         }
 
         // PHASE 2: Iteratively solve all contacts together
-        for (let iteration = 0; iteration < 6; iteration++) {
+        for (const contact of contacts) {
+            this.prepareContact(contact.entityA, contact.entityB, contact.info);
+        }
+
+        for (const contact of contacts) {
+            this.warmStart(contact.entityA, contact.entityB, contact.info);
+        }
+
+        for (let iteration = 0; iteration < 8; iteration++) {
             for (const contact of contacts) {
-                this.resolveCollision(contact.entityA, contact.entityB, contact.info, dt);
+                this.resolveCollision(contact.entityA, contact.entityB, contact.info);
             }
         }
 
@@ -426,6 +435,9 @@ export class Physics {
                 }
             }
         }
+
+        // Position correction
+        this.correctPositions(contacts);
     }
 
     checkCollision(entityA: Entity, entityB: Entity): CollisionResult {
@@ -463,21 +475,13 @@ export class Physics {
                 const direction = posB.sub(posA);
                 let normal = distance > 0 ? direction.scale(1 / distance) : new Vector2(1, 0);
 
-                // Warm starting - copy accumulated impulse from last frame if contact persists
-                let accumulatedImpulse = 0;
-                const lastContactInfo = this.collisionPairs.get(entityA)?.get(entityB) ||
-                    this.collisionPairs.get(entityB)?.get(entityA);
-                if (lastContactInfo) {
-                    accumulatedImpulse = lastContactInfo.accumulatedNormalImpulse;
-                }
-
                 return {
                     isTrigger,
                     info: {
                         normal,
                         penetration,
                         contact: posA.add(normal.scale(entityA.collider.radius)),
-                        accumulatedNormalImpulse: accumulatedImpulse
+                        accumulatedNormalImpulse: this.getWarmStartImpulse(entityA, entityB, normal)
                     }
                 };
             } else if (entityA.collider instanceof BoxCollider && entityB.collider instanceof BoxCollider) {
@@ -509,20 +513,13 @@ export class Physics {
                 const contactX = posA.x + Math.sign(delta.x) * (halfAx - overlapX / 2);
                 const contactY = posA.y + Math.sign(delta.y) * (halfAy - overlapY / 2);
 
-                let accumulatedImpulse = 0;
-                const lastContactInfo = this.collisionPairs.get(entityA)?.get(entityB) ||
-                    this.collisionPairs.get(entityB)?.get(entityA);
-                if (lastContactInfo) {
-                    accumulatedImpulse = lastContactInfo.accumulatedNormalImpulse;
-                }
-
                 return {
                     isTrigger,
                     info: {
                         normal,
                         penetration,
                         contact: new Vector2(contactX, contactY),
-                        accumulatedNormalImpulse: accumulatedImpulse
+                        accumulatedNormalImpulse: this.getWarmStartImpulse(entityA, entityB, normal)
                     }
                 };
 
@@ -585,20 +582,13 @@ export class Physics {
                     contact = closest;
                 }
 
-                let accumulatedImpulse = 0;
-                const lastContactInfo = this.collisionPairs.get(entityA)?.get(entityB) ||
-                    this.collisionPairs.get(entityB)?.get(entityA);
-                if (lastContactInfo) {
-                    accumulatedImpulse = lastContactInfo.accumulatedNormalImpulse;
-                }
-
                 return {
                     isTrigger,
                     info: {
                         normal,
                         penetration,
                         contact,
-                        accumulatedNormalImpulse: accumulatedImpulse
+                        accumulatedNormalImpulse: this.getWarmStartImpulse(entityA, entityB, normal)
                     }
                 };
             }
@@ -613,7 +603,7 @@ export class Physics {
         }
     }
 
-    resolveCollision(entityA: Entity, entityB: Entity, info: CollisionInfo, dt: number) {
+    resolveCollision(entityA: Entity, entityB: Entity, info: CollisionInfo) {
         if (!entityA.body || !entityB.body) return;
 
         const bodyA = entityA.body;
@@ -633,28 +623,8 @@ export class Physics {
         // Velocity along normal
         const velAlongNormal = relVel.dot(info.normal);
 
-        // Don't resolve if velocities are separating
-        if (velAlongNormal > 0) return;
-
-        // Restitution (bounciness) with slop
-        const restitutionSlop = 0.5;  // Kill bounce below 0.5 unit/sec
-        let restitution = Math.max(bodyA.restitution, bodyB.restitution);
-
-        // No bounce for slow collisions (helps objects settle)
-        if (Math.abs(velAlongNormal) < restitutionSlop) {
-            restitution = 0;
-        }
-
-        // Position correction with slop (Box2D/PhysX style)
-        const slop = 0.01;  // Allow small penetration without correction
-        const baumgarte = 0.2;  // Correct 20% of penetration per frame
-
-        // Bias velocity - only apply when no bounce (restitution = 0)
-        // When bouncing, let restitution handle it naturally
-        const biasVelocity = restitution === 0 ? (Math.max(0, info.penetration - slop) * baumgarte) / dt : 0;
-
-        // Calculate impulse using inverse mass
-        const jn = (-(1 + restitution) * velAlongNormal + biasVelocity) / totalInvMass;
+        // Aim for the stored bounce speed
+        const jn = ((info.bounceVelocity ?? 0) - velAlongNormal) / totalInvMass;
 
         // Clamp accumulated impulse
         const oldImpulse = info.accumulatedNormalImpulse || 0;
@@ -666,7 +636,7 @@ export class Physics {
         bodyB.velocity = bodyB.velocity.add(info.normal.scale(actualImpulse * invMassB));
 
         // Apply angular impulse (torque from contact point)
-        // Disabled for now because colliders must rotate too and there isn't polygon collider solver for now
+        // Disabled for now because colliders must rotate too, but there isn't a polygon collider solver for now
         /*const rA = info.contact.sub(entityA.position);
         const rB = info.contact.sub(entityB.position);
         
@@ -675,5 +645,57 @@ export class Physics {
         
         bodyA.rotationVelocity += angularImpulseA * (isFinite(bodyA.inertia) ? 1 / bodyA.inertia : 0);
         bodyB.rotationVelocity += angularImpulseB * (isFinite(bodyB.inertia) ? 1 / bodyB.inertia : 0);*/
+    }
+
+    // Box2D-style position correction
+    correctPositions(contacts: Array<{ entityA: Entity, entityB: Entity, info: CollisionInfo }>) {
+        const slop = 0.01;
+        const percent = 0.4; // Fraction of the overlap removed per step
+        const maxCorrection = 0.2; // Largest push per step, in world units
+
+        for (const { entityA, entityB, info } of contacts) {
+            if (!entityA.body || !entityB.body) continue;
+            const invMassA = isFinite(entityA.body.mass) ? 1 / entityA.body.mass : 0;
+            const invMassB = isFinite(entityB.body.mass) ? 1 / entityB.body.mass : 0;
+            const totalInvMass = invMassA + invMassB;
+            if (totalInvMass === 0) continue;
+
+            const move = Math.min(Math.max(0, info.penetration - slop) * percent, maxCorrection) / totalInvMass;
+            entityA.position.x -= info.normal.x * move * invMassA;
+            entityA.position.y -= info.normal.y * move * invMassA;
+            entityB.position.x += info.normal.x * move * invMassB;
+            entityB.position.y += info.normal.y * move * invMassB;
+        }
+    }
+
+    // Impulse warm start utilities
+    getWarmStartImpulse(entityA: Entity, entityB: Entity, normal: Vector2): number {
+        const sameOrder = this.collisionPairs.get(entityA)?.get(entityB);
+        const last = sameOrder ?? this.collisionPairs.get(entityB)?.get(entityA);
+        if (!last) return 0;
+
+        // The stored normal points from last frame's A to B, so flip it if the pair was stored reversed
+        const lastNormal = sameOrder ? last.normal : last.normal.neg();
+        return lastNormal.dot(normal) > 0.9 ? last.accumulatedNormalImpulse : 0;
+    }
+
+    warmStart(entityA: Entity, entityB: Entity, info: CollisionInfo) {
+        if (!entityA.body || !entityB.body) return;
+
+        const invMassA = isFinite(entityA.body.mass) ? 1 / entityA.body.mass : 0;
+        const invMassB = isFinite(entityB.body.mass) ? 1 / entityB.body.mass : 0;
+
+        const impulse = info.normal.scale(info.accumulatedNormalImpulse);
+        entityA.body.velocity = entityA.body.velocity.sub(impulse.scale(invMassA));
+        entityB.body.velocity = entityB.body.velocity.add(impulse.scale(invMassB));
+    }
+
+    prepareContact(entityA: Entity, entityB: Entity, info: CollisionInfo) {
+        info.bounceVelocity = 0;
+        if (!entityA.body || !entityB.body) return;
+
+        const vn = entityB.body.velocity.sub(entityA.body.velocity).dot(info.normal);
+        const restitution = Math.max(entityA.body.restitution, entityB.body.restitution);
+        if (vn < -0.5) info.bounceVelocity = -restitution * vn;
     }
 }
