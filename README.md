@@ -2,7 +2,19 @@
 	<img src="./assets/logo.png"/>
 </div>
 
-Kippy is a 2D JS game engine written purely for fun and simplicity. It currently utilizes the Canvas 2D context for rendering and aims to have a small set of APIs viable for game dev, but do expect a lot of components to change in the future.
+Kippy is a 2D JS game engine written from scratch with zero dependencies, aiming to be simple, lightweight, and fun to use. It currently utilizes the Canvas 2D context for rendering and provides a small set of APIs for game dev. Kippy is in early development, so expect some components and features to change.
+
+## Features
+
+* **Game**: A simple game structure of game loop, scenes, and entities.
+* **Graphics**: Sprites, visual effects, and sprite sheet animation.
+* **Physics**: An in-house physics engine handling bodies, movements, and collisions.
+* **Input**: Handle keyboard, mouse, touch, pen, etc.
+* **Audio**: Audio buses, fades, pitch control, and per-instance or global volume.
+* **Camera**: Pan, rotation, zoom, and screen-to-world conversion.
+* **Vector2**: A thorough set of APIs for 2D vector calculations.
+* **Zero dependencies**: Written fully from scratch, no external dependencies.
+* **Free and open source**: Licensed under Apache 2.0.
 
 ## Usage
 
