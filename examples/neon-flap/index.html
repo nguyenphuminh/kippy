@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flappy Bird</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(#07021a, #240a45);
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #ui {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            font-family: 'Press Start 2P', monospace;
+            color: #fff;
+        }
+
+        #score {
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(24px, 5vw, 48px);
+            text-shadow: 0 0 4px #fff, 0 0 12px #00f0ff, 0 0 28px #00f0ff;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #score.visible {
+            opacity: 1;
+        }
+
+        #overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            background: rgba(7, 2, 26, 0.55);
+            transition: opacity 0.3s;
+        }
+
+        #overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #overlay-title {
+            font-size: clamp(20px, 5vw, 42px);
+            letter-spacing: 2px;
+            text-shadow: 0 0 4px #fff, 0 0 12px #ff2bd6, 0 0 32px #ff2bd6, 0 0 64px #ff2bd6;
+        }
+
+        #overlay-subtitle {
+            font-size: clamp(10px, 2vw, 16px);
+            color: #00f0ff;
+            text-shadow: 0 0 10px #00f0ff;
+            animation: blink 1.2s step-end infinite;
+        }
+
+        #best-score {
+            font-size: clamp(9px, 1.8vw, 14px);
+            color: #b9a6ff;
+        }
+
+        #final-score {
+            font-size: clamp(12px, 2.5vw, 20px);
+            color: #ffe14d;
+            text-shadow: 0 0 10px #ffe14d;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div id="score">0</div>
+        <div id="overlay">
+            <div id="overlay-title">FLAPPY BIRD</div>
+            <div id="final-score" style="display:none"></div>
+            <div id="best-score" style="display:none"></div>
+            <div id="overlay-subtitle">PRESS SPACE OR TAP</div>
+        </div>
+    </div>
+    <script type="module" src="./index.js"></script>
+</body>
+</html>
