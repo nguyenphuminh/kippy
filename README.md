@@ -4,6 +4,8 @@
 
 Kippy is a 2D JS game engine written from scratch with zero dependencies, aiming to be simple, lightweight, and fun to use. It currently utilizes the Canvas 2D context for rendering and provides a small set of APIs for game dev. Kippy is in early development, so expect some components and features to change.
 
+Also check Kippy out on [itch.io](https://npmgames.itch.io/kippy-game-engine)!
+
 ## Features
 
 * **Game**: A simple game structure of game loop, scenes, and entities.
@@ -33,9 +35,13 @@ or if you are on raw HTML5, you can pull from a cdn:
 import { Game, Scene, Entity } from "https://unpkg.com/kippy";
 ```
 
-## Example
+## Examples
 
-There is a Flappy Bird game in `./example` for now. You can run it by cloning this repo, then install deps:
+You can check out examples in the `./examples` directory:
+
+* [Neon Flap](./examples/neon-flap)
+
+To try them out, clone this repo, then install deps:
 ```sh
 npm install
 ```
@@ -49,6 +55,8 @@ and start Vite:
 ```sh
 npx vite
 ```
+
+Then go to `http://localhost:5173/game-name/index.html`, for example, `http://localhost:5173/neon-flap/index.html`.
 
 ## Tutorial
 
@@ -351,7 +359,7 @@ collider.layer; // Set with the matching parameter above, default is (1 << 0)
 collider.mask; // Set with the matching parameter above, default is 0xFFFFFFFF
 ```
 
-And you can handle when two objects collide:
+and you can handle when two objects collide:
 ```js
 entity.onCollisionEnter = (other, info) => {};
 entity.onCollisionStay = (other, info) => {};
