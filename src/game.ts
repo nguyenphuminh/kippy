@@ -72,6 +72,8 @@ export class Game {
             this.acc += dt;
 
             while (this.acc >= STEP) {
+                // Poll for gamepads' inputs
+                this.input.pollGamepads();
                 // Update game logic
                 this.scene.update(STEP);
                 // Update animators
