@@ -27,7 +27,7 @@ export class AudioBus {
         this.apply();
     }
  
-    private apply() {
+    apply() {
         this.input.gain.value = this._muted ? 0 : this._volume;
     }
 }

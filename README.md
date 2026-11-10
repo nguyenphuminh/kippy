@@ -229,6 +229,40 @@ input.pointer.x; // Current X position of mouse/touch
 input.pointer.y; // Current Y position of mouse/touch
 ```
 
+Kippy supports input handling for controllers as well:
+```js
+// Buttons
+input.isButtonDown(buttonId, padIndex);
+input.isButtonPressed(buttonId, padIndex);
+input.isButtonReleased(buttonId, padIndex);
+
+// Where buttonId could be one of these values (remember to import BUTTON first):
+BUTTON.A; // 0
+BUTTON.B; // 1
+BUTTON.X; // 2
+BUTTON.Y; // 3
+BUTTON.LB; // 4
+BUTTON.RB; // 5
+BUTTON.LT; // 6
+BUTTON.RT; // 7
+BUTTON.SELECT; // 8
+BUTTON.START; // 9
+BUTTON.LS; // 10
+BUTTON.RS; // 11
+BUTTON.UP; // 12
+BUTTON.DOWN; // 13
+BUTTON.LEFT; // 14
+BUTTON.RIGHT; // 15
+BUTTON.HOME; // 16
+
+// Furthermore, padIndex is optional, and it defaults to input.activePad, which is the
+// controller the player used most recently (0 if no controller has been used yet)
+
+// Joystick, returns a Vector2 with x and y from -1 to 1 (y is positive when pushed down)
+input.getStick(stick, padIndex, deadzone);
+// where stick can be "left" or "right", and deadzone is 0.15 by default.
+```
+
 ### Vectors
 
 To work with positions and movements in Kippy, it is best to know about `Vector2` first. Positions, velocities, forces, etc are all represented as vectors in Kippy. And here are how you can create a 2D vector and some vector math utilities that come along with it:

@@ -7,7 +7,7 @@ export declare class AudioBus {
     set volume(value: number);
     get muted(): boolean;
     set muted(value: boolean);
-    private apply;
+    apply(): void;
 }
 export declare class AudioManager {
     private _context?;
