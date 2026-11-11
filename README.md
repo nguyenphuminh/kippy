@@ -11,7 +11,7 @@ Also check Kippy out on [itch.io](https://npmgames.itch.io/kippy-game-engine)!
 * **Game**: A simple game structure of game loop, scenes, and entities.
 * **Graphics**: Sprites, visual effects, and sprite sheet animation.
 * **Physics**: An in-house physics engine handling bodies, movements, and collisions.
-* **Input**: Handle keyboard, mouse, touch, pen, etc.
+* **Input**: Handle keyboard, mouse, touch, controller, pen, etc.
 * **Audio**: Audio buses, fades, pitch control, and per-instance or global volume.
 * **Camera**: Pan, rotation, zoom, and screen-to-world conversion.
 * **Vector2**: A thorough set of APIs for 2D vector calculations.
